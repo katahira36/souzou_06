@@ -26,13 +26,13 @@
 <p id="text"></p>
 
 <button class="hogehoge" type="button" id="start">start</button>
-<!-- <button class="hogehoge" type="button" id="stop">stop</button> -->
+<button class="hogehoge" type="button" id="stop">next</button>
 <!-- <botton type="button" id="download">dl</botton> -->
 
 <script>
 
   const startbutton = document.getElementById('start');
-  // var stopbutton  = document.getElementById('stop');
+  const nextbutton  = document.getElementById('stop');
   // var downloadbutton = document.getElementById('download');
 
   const video = document.getElementById('video');// 適当にvideoタグのオブジェクトを取得
@@ -94,22 +94,22 @@
 
       // Loweの比率テスト
       const goodMatches = new cv.DMatchVector();
-      // const pts1 = [];
-      // const pts2 = [];
+      const pts1 = [];
+      const pts2 = [];
       for (let i = 0; i < knnMatches.size(); i++) {
         const m = knnMatches.get(i).get(0); // 最良のマッチ
         const n = knnMatches.get(i).get(1); // 次点のマッチ
         if (m.distance < 0.75 * n.distance) { // 比率テスト: 0.75が一般的
           goodMatches.push_back(m);
-          // pts1.push(startkeypoints.get(m.queryIdx).pt);
-          // pts2.push(keypoints.get(m.trainIdx).pt);
+          pts1.push(startkeypoints.get(m.queryIdx).pt);
+          pts2.push(keypoints.get(m.trainIdx).pt);
         }
       }
 
-      // const srcPoints = cv.matFromArray(pts1.length, 1, cv.CV_32FC2, pts1.flat());
-      // const dstPoints = cv.matFromArray(pts2.length, 1, cv.CV_32FC2, pts2.flat());
-      // const mask = new cv.Mat();
-      // const homography = cv.findHomography(srcPoints, dstPoints, cv.RANSAC, 1.0, mask);
+      const srcPoints = cv.matFromArray(pts1.length, 1, cv.CV_32FC2, pts1.flat());
+      const dstPoints = cv.matFromArray(pts2.length, 1, cv.CV_32FC2, pts2.flat());
+      const mask = new cv.Mat();
+      const homography = cv.findHomography(srcPoints, dstPoints, cv.RANSAC, 1.0, mask);
 
       // // マスクを適用して正しいマッチだけ描画
       // const inlierMatches = new cv.DMatchVector();
@@ -119,21 +119,46 @@
       //   }
       // }
 
-      const result = new cv.Mat();
-      // cv.drawMatches(startdata, startkeypoints, equalized, keypoints, inlierMatches, result, [0, 255, 0, 255]);
-      cv.drawMatches(startdata, startkeypoints, equalized, keypoints, goodMatches, result, [0, 255, 0, 255]);
+      var i = 0;
 
-      cv.imshow('movie', result);
+      nextbutton.addEventListener('click', function(){
+        const pt1 = pts1[i];
+        const pt2 = pts2[i];
+
+        const result = new cv.Mat();
+        cv.hconcat([startdata, equalized], result);
+
+        const offset = startdata.cols;
+        const color = new cv.Scalar(255, 0, 0, 255);
+        cv.circle(result, pt1, 5, color, 2);
+        cv.circle(result, { x: pt2.x + offset, y: pt2.y }, 5, color, 2);
+        cv.line(result, pt1, { x: pt2.x + offset, y: pt2.y }, color, 1);
+
+        cv.imshow('movie', result);
+        cty.drawImage(movie, 0, 0, movie.width, movie.height, 0, 0, canvas.width, canvas.height);
+
+        i = (i + 1) % goodMatches.length;
+
+        text.textContent = i + "/" + (goodMatches.length + 1);
+
+        result.delete();
+      });
+
+      // const result = new cv.Mat();
+      // cv.drawMatches(startdata, startkeypoints, equalized, keypoints, inlierMatches, result, [0, 255, 0, 255]);
+      // cv.drawMatches(startdata, startkeypoints, equalized, keypoints, goodMatches, result, [0, 255, 0, 255]);
+
+      // cv.imshow('movie', result);
 
       bf.delete();
       knnMatches.delete();
       goodMatches.delete();
-      // srcPoints.delete();
-      // dstPoints.delete();
-      // mask.delete();
-      // homography.delete();
+      srcPoints.delete();
+      dstPoints.delete();
+      mask.delete();
+      homography.delete();
       // inlierMatches.delete();
-      result.delete();
+      // result.delete();
 
     }
 
@@ -149,7 +174,7 @@
     orb.delete();
 
     // 再度次のフレームを描画するためにrequestAnimationFrameを使う
-    requestAnimationFrame(drawCameraToCanvas);
+    // requestAnimationFrame(drawCameraToCanvas);
   }
 
   function vkeybord() {
@@ -177,7 +202,7 @@
       movie.width = 400;
       movie.height = movie.width *video.height /video.width;
 
-      text.textContent = canvas.width + ":" + canvas.height;
+      // text.textContent = canvas.width + ":" + canvas.height;
 
       // 映像の準備ができたら描画開始
       video.onplaying = () => {

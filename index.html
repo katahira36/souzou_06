@@ -109,7 +109,7 @@
       const srcPoints = cv.matFromArray(pts1.length, 1, cv.CV_32FC2, pts1.flat());
       const dstPoints = cv.matFromArray(pts2.length, 1, cv.CV_32FC2, pts2.flat());
       const mask = new cv.Mat();
-      const homography = cv.findHomography(srcPoints, dstPoints, cv.RANSAC, 6.0, mask);
+      const homography = cv.findHomography(srcPoints, dstPoints, cv.RANSAC, 10.0, mask);
 
       // マスクを適用して正しいマッチだけ描画
       const inlierMatches = new cv.DMatchVector();

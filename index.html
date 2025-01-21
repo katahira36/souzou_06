@@ -104,6 +104,7 @@
       const result = new cv.Mat();
       cv.drawMatches(startdata, startkeypoints, equalized, keypoints, goodMatches, result, [0, 255, 0, 255]);
 
+      movie.width = movie.width * 2;
       cv.imshow('movie', result);
 
       bf.delete();

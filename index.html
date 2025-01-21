@@ -101,7 +101,7 @@
         const n = knnMatches.get(i).get(1); // 次点のマッチ
         if (m.distance < 0.75 * n.distance) { // 比率テスト: 0.75が一般的
           goodMatches.push_back(m);
-          pts1.push(startkeypointskeypoints1.get(m.queryIdx).pt);
+          pts1.push(startkeypointskeypoints.get(m.queryIdx).pt);
           pts2.push(keypoints.get(m.trainIdx).pt);
         }
       }

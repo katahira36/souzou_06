@@ -94,33 +94,34 @@
 
       // Loweの比率テスト
       const goodMatches = new cv.DMatchVector();
-      const pts1 = [];
-      const pts2 = [];
+      // const pts1 = [];
+      // const pts2 = [];
       for (let i = 0; i < knnMatches.size(); i++) {
         const m = knnMatches.get(i).get(0); // 最良のマッチ
         const n = knnMatches.get(i).get(1); // 次点のマッチ
         if (m.distance < 0.75 * n.distance) { // 比率テスト: 0.75が一般的
           goodMatches.push_back(m);
-          pts1.push(startkeypoints.get(m.queryIdx).pt);
-          pts2.push(keypoints.get(m.trainIdx).pt);
+          // pts1.push(startkeypoints.get(m.queryIdx).pt);
+          // pts2.push(keypoints.get(m.trainIdx).pt);
         }
       }
 
-      const srcPoints = cv.matFromArray(pts1.length, 1, cv.CV_32FC2, pts1.flat());
-      const dstPoints = cv.matFromArray(pts2.length, 1, cv.CV_32FC2, pts2.flat());
-      const mask = new cv.Mat();
-      const homography = cv.findHomography(srcPoints, dstPoints, cv.RANSAC, 1.0, mask);
+      // const srcPoints = cv.matFromArray(pts1.length, 1, cv.CV_32FC2, pts1.flat());
+      // const dstPoints = cv.matFromArray(pts2.length, 1, cv.CV_32FC2, pts2.flat());
+      // const mask = new cv.Mat();
+      // const homography = cv.findHomography(srcPoints, dstPoints, cv.RANSAC, 1.0, mask);
 
-      // マスクを適用して正しいマッチだけ描画
-      const inlierMatches = new cv.DMatchVector();
-      for (let i = 0; i < mask.rows; i++) {
-        if (mask.data[i]) {
-          inlierMatches.push_back(goodMatches.get(i));
-        }
-      }
+      // // マスクを適用して正しいマッチだけ描画
+      // const inlierMatches = new cv.DMatchVector();
+      // for (let i = 0; i < mask.rows; i++) {
+      //   if (mask.data[i]) {
+      //     inlierMatches.push_back(goodMatches.get(i));
+      //   }
+      // }
 
       const result = new cv.Mat();
-      cv.drawMatches(startdata, startkeypoints, equalized, keypoints, inlierMatches, result, [0, 255, 0, 255]);
+      // cv.drawMatches(startdata, startkeypoints, equalized, keypoints, inlierMatches, result, [0, 255, 0, 255]);
+      cv.drawMatches(startdata, startkeypoints, equalized, keypoints, goodMatches, result, [0, 255, 0, 255]);
 
       cv.imshow('movie', result);
 

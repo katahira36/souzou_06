@@ -59,7 +59,6 @@
   function drawCameraToCanvas() {
 
     // 現在のフレームを<canvas>に描画
-    movie.width = movie.width/2;
     ctx.drawImage(video, 0, 0, video.width, video.height, 0, 0, movie.width, movie.height);
     let src = cv.imread(movie);
 
@@ -121,6 +120,7 @@
 
     // 結果をCanvasに描画
     cty.drawImage(movie, 0, 0, movie.width, movie.height, 0, 0, canvas.width, canvas.height);
+    movie.width = movie.width/2;
 
     // メモリの解放
     src.delete();

@@ -109,6 +109,8 @@
 
       cv.imshow('movie', result);
 
+      movie.width = movie.width/2;
+
       bf.delete();
       knnMatches.delete();
       goodMatches.delete();
@@ -120,7 +122,6 @@
 
     // 結果をCanvasに描画
     cty.drawImage(movie, 0, 0, movie.width, movie.height, 0, 0, canvas.width, canvas.height);
-    movie.width = movie.width/2;
 
     // メモリの解放
     src.delete();

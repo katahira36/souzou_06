@@ -104,7 +104,6 @@
       const result = new cv.Mat();
       cv.drawMatches(startdata, startkeypoints, equalized, keypoints, goodMatches, result, [0, 255, 0, 255]);
 
-      movie.width = movie.width * 2;
       cv.imshow('movie', result);
 
       bf.delete();
@@ -113,6 +112,7 @@
       result.delete();
     }
 
+    canvas.width = canvas.width *2;
     // 結果をCanvasに描画
     cty.drawImage(movie, 0, 0, movie.width, movie.height, 0, 0, canvas.width, canvas.height);
 

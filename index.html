@@ -59,6 +59,7 @@
   function drawCameraToCanvas() {
 
     // 現在のフレームを<canvas>に描画
+    movie.width = canvas.width/2;
     ctx.drawImage(video, 0, 0, video.width, video.height, 0, 0, movie.width, movie.height);
     let src = cv.imread(movie);
 
@@ -108,8 +109,6 @@
       cv.drawMatches(startdata, startkeypoints, equalized, keypoints, goodMatches, result, [0, 255, 0, 255]);
 
       cv.imshow('movie', result);
-
-      movie.width = movie.width/2;
 
       bf.delete();
       knnMatches.delete();

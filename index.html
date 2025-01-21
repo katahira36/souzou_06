@@ -118,7 +118,6 @@
       sckeypoints.delete();
     }
 
-    canvas.width = canvas.width *2;
     // 結果をCanvasに描画
     cty.drawImage(movie, 0, 0, movie.width, movie.height, 0, 0, canvas.width, canvas.height);
 
@@ -154,6 +153,7 @@
 
       // movie.width = movie.height *video.width /video.height
       canvas.height = canvas.width * video.height / video.width;
+      canvas.width = canvas.width *2;
       
       movie.width = 400;
       movie.height = movie.width *video.height /video.width;

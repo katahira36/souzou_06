@@ -107,7 +107,9 @@
           pts2.push(keypoints.get(m.trainIdx).pt);
         }
       }
-      match.delete();
+      if(!(match === null)){
+        match.delete();
+      }
       match = goodMatches.clone();
 
       const srcPoints = cv.matFromArray(pts1.length, 1, cv.CV_32FC2, pts1.flat());

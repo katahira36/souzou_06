@@ -125,6 +125,8 @@
         const pt1 = pts1[i];
         const pt2 = pts2[i];
 
+        console.log(i);
+        console.log(goodMatches.length);
         console.log("a");
         const result = new cv.Mat();
         // cv.hconcat([startdata, equalized], result);
@@ -144,8 +146,6 @@
         i = (i + 1) % goodMatches.length;
 
         text.textContent = i + "/" + (goodMatches.length + 1);
-        console.log(i);
-        console.log(goodMatches.length);
 
         result.delete();
       });

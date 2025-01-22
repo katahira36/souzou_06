@@ -56,7 +56,10 @@
   let startkeypoints = null;
   let startdescriptors = null;
   var incri = 0;
-  var match = null;
+  var leng = 0;
+  let match = null;
+  const pts1 = [];
+  const pts2 = [];
 
   function drawCameraToCanvas() {
 
@@ -95,9 +98,10 @@
       bf.knnMatch(startdescriptors, descriptors, knnMatches, 2); // k=2
 
       // Loweの比率テスト
+      leng = 0;
       const goodMatches = new cv.DMatchVector();
-      const pts1 = [];
-      const pts2 = [];
+      pts1 = [];
+      pts2 = [];
       for (let i = 0; i < knnMatches.size(); i++) {
         const m = knnMatches.get(i).get(0); // 最良のマッチ
         const n = knnMatches.get(i).get(1); // 次点のマッチ
@@ -107,10 +111,9 @@
           pts2.push(keypoints.get(m.trainIdx).pt);
         }
       }
-      if(!(match === null)){
-        match.delete();
-      }
-      match = goodMatches.clone();
+
+      console.log(goodMatches.length);
+      leng = goodMatches.length;
 
       const srcPoints = cv.matFromArray(pts1.length, 1, cv.CV_32FC2, pts1.flat());
       const dstPoints = cv.matFromArray(pts2.length, 1, cv.CV_32FC2, pts2.flat());
@@ -125,6 +128,14 @@
       //   }
       // }
 
+      const result = new cv.Mat();
+      // cv.hconcat([startdata, equalized], result);
+      cv.drawMatches(startdata, startkeypoints, equalized, keypoints, goodMatches, result, [0, 255, 0, 255]);
+      if(!(match === null)){
+        match.delete();
+      }
+      match = result.clone();
+
       incri = 0;
 
       nextbutton.addEventListener('click', function(){
@@ -132,28 +143,24 @@
         const pt2 = pts2[incri];
 
         console.log(incri);
-        console.log(match.length);
-        console.log("a");
-        const result = new cv.Mat();
-        // cv.hconcat([startdata, equalized], result);
-        cv.drawMatches(startdata, startkeypoints, equalized, keypoints, match, result, [0, 255, 0, 255]);
+        console.log(leng);
 
         console.log("b");
         const offset = startdata.cols;
         const color = new cv.Scalar(255, 0, 0, 255);
-        cv.circle(result, pt1, 5, color, 2);
-        cv.circle(result, { x: pt2.x + offset, y: pt2.y }, 5, color, 2);
-        cv.line(result, pt1, { x: pt2.x + offset, y: pt2.y }, color, 1);
+        cv.circle(match, pt1, 5, color, 2);
+        cv.circle(match, { x: pt2.x + offset, y: pt2.y }, 5, color, 2);
+        cv.line(match, pt1, { x: pt2.x + offset, y: pt2.y }, color, 1);
 
         console.log("c");
-        cv.imshow('movie', result);
+        cv.imshow('movie', match);
         cty.drawImage(movie, 0, 0, movie.width, movie.height, 0, 0, canvas.width, canvas.height);
 
-        incri = (incri + 1) % match.length;
+        incri = (incri + 1) % leng;
 
-        text.textContent = incri + "/" + (match.length + 1);
+        text.textContent = incri + "/" + (leng + 1);
 
-        result.delete();
+        color.delete();
       });
 
       // const result = new cv.Mat();
@@ -169,6 +176,7 @@
       dstPoints.delete();
       mask.delete();
       homography.delete();
+      result.delete();
       // inlierMatches.delete();
       // result.delete();
 

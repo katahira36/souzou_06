@@ -56,7 +56,7 @@
   let startkeypoints = null;
   let startdescriptors = null;
   var incri = 0;
-  var match = [];
+  var match = null;
 
   function drawCameraToCanvas() {
 
@@ -95,7 +95,6 @@
       bf.knnMatch(startdescriptors, descriptors, knnMatches, 2); // k=2
 
       // Loweの比率テスト
-      match = [];
       const goodMatches = new cv.DMatchVector();
       const pts1 = [];
       const pts2 = [];
@@ -108,8 +107,8 @@
           pts2.push(keypoints.get(m.trainIdx).pt);
         }
       }
-
-      match = goodMatches;
+      match.delete();
+      match = goodMatches.clone();
 
       const srcPoints = cv.matFromArray(pts1.length, 1, cv.CV_32FC2, pts1.flat());
       const dstPoints = cv.matFromArray(pts2.length, 1, cv.CV_32FC2, pts2.flat());

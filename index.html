@@ -125,15 +125,18 @@
         const pt1 = pts1[i];
         const pt2 = pts2[i];
 
+        console.log("a");
         const result = new cv.Mat();
         cv.hconcat([startdata, equalized], result);
 
+        console.log("b");
         const offset = startdata.cols;
         const color = new cv.Scalar(255, 0, 0, 255);
         cv.circle(result, pt1, 5, color, 2);
         cv.circle(result, { x: pt2.x + offset, y: pt2.y }, 5, color, 2);
         cv.line(result, pt1, { x: pt2.x + offset, y: pt2.y }, color, 1);
 
+        console.log("c");
         cv.imshow('movie', result);
         cty.drawImage(movie, 0, 0, movie.width, movie.height, 0, 0, canvas.width, canvas.height);
 

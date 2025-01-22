@@ -112,8 +112,8 @@
         }
       }
 
-      console.log(goodMatches.length);
-      leng = goodMatches.length;
+      console.log(pts1.length);
+      leng = pts1.length;
 
       const srcPoints = cv.matFromArray(pts1.length, 1, cv.CV_32FC2, pts1.flat());
       const dstPoints = cv.matFromArray(pts2.length, 1, cv.CV_32FC2, pts2.flat());
@@ -159,8 +159,6 @@
         incri = (incri + 1) % leng;
 
         text.textContent = incri + "/" + (leng + 1);
-
-        color.delete();
       });
 
       // const result = new cv.Mat();

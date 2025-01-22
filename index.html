@@ -55,6 +55,8 @@
   let startdata = null;
   let startkeypoints = null;
   let startdescriptors = null;
+  var incri = 0;
+  var match = [];
 
   function drawCameraToCanvas() {
 
@@ -93,6 +95,7 @@
       bf.knnMatch(startdescriptors, descriptors, knnMatches, 2); // k=2
 
       // Loweの比率テスト
+      match = [];
       const goodMatches = new cv.DMatchVector();
       const pts1 = [];
       const pts2 = [];
@@ -105,6 +108,8 @@
           pts2.push(keypoints.get(m.trainIdx).pt);
         }
       }
+
+      match = goodMatches;
 
       const srcPoints = cv.matFromArray(pts1.length, 1, cv.CV_32FC2, pts1.flat());
       const dstPoints = cv.matFromArray(pts2.length, 1, cv.CV_32FC2, pts2.flat());
@@ -119,18 +124,18 @@
       //   }
       // }
 
-      var i = 0;
+      incri = 0;
 
       nextbutton.addEventListener('click', function(){
-        const pt1 = pts1[i];
-        const pt2 = pts2[i];
+        const pt1 = pts1[incri];
+        const pt2 = pts2[incri];
 
-        console.log(i);
-        console.log(goodMatches.length);
+        console.log(incri);
+        console.log(match.length);
         console.log("a");
         const result = new cv.Mat();
         // cv.hconcat([startdata, equalized], result);
-        cv.drawMatches(startdata, startkeypoints, equalized, keypoints, goodMatches, result, [0, 255, 0, 255]);
+        cv.drawMatches(startdata, startkeypoints, equalized, keypoints, match, result, [0, 255, 0, 255]);
 
         console.log("b");
         const offset = startdata.cols;
@@ -143,9 +148,9 @@
         cv.imshow('movie', result);
         cty.drawImage(movie, 0, 0, movie.width, movie.height, 0, 0, canvas.width, canvas.height);
 
-        i = (i + 1) % goodMatches.length;
+        incri = (incri + 1) % match.length;
 
-        text.textContent = i + "/" + (goodMatches.length + 1);
+        text.textContent = incri + "/" + (match.length + 1);
 
         result.delete();
       });

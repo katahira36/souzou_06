@@ -116,7 +116,7 @@
       console.log(pts1.length);
       leng = pts1.length;
 
-      if(!(homography === null)){
+      if(!(matrix === null)){
         matrix.delete();
       }
       const srcPoints = cv.matFromArray(pts1.length, 1, cv.CV_32FC2, pts1.flat());

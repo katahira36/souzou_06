@@ -185,15 +185,18 @@
     console.log(incri);
     console.log(leng);
 
+    let work = match.clone();
+    cv.imshow('movie', match);
+
     console.log("b");
     const offset = startdata.cols;
     const color = new cv.Scalar(255, 0, 0, 255);
-    cv.circle(match, pt1, 5, color, 2);
-    cv.circle(match, { x: pt2.x + offset, y: pt2.y }, 5, color, 2);
-    cv.line(match, pt1, { x: pt2.x + offset, y: pt2.y }, color, 1);
+    cv.circle(work, pt1, 5, color, 2);
+    cv.circle(work, { x: pt2.x + offset, y: pt2.y }, 5, color, 2);
+    cv.line(work, pt1, { x: pt2.x + offset, y: pt2.y }, color, 1);
 
     console.log("c");
-    cv.imshow('movie', match);
+    cv.imshow('movie', work);
     cty.drawImage(movie, 0, 0, movie.width, movie.height, 0, 0, canvas.width, canvas.height);
 
     incri = (incri + 1) % leng;

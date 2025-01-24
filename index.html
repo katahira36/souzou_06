@@ -122,7 +122,7 @@
       const srcPoints = cv.matFromArray(pts1.length, 1, cv.CV_32FC2, pts1.flat());
       const dstPoints = cv.matFromArray(pts2.length, 1, cv.CV_32FC2, pts2.flat());
       const mask = new cv.Mat();
-      const homography = cv.findHomography(srcPoints, dstPoints, cv.RANSAC, 1000.0, mask);
+      const homography = cv.findHomography(srcPoints, dstPoints, cv.RANSAC, 0, mask);
 
       for (let i = 0; i < homography.rows; i++) {
         let row = [];

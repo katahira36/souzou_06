@@ -60,7 +60,7 @@
   let match = null;
   let pts1 = [];
   let pts2 = [];
-  let matrix = null;
+  let matrix = [];
 
   function drawCameraToCanvas() {
 
@@ -116,16 +116,20 @@
       console.log(pts1.length);
       leng = pts1.length;
 
-      if(!(matrix === null)){
-        matrix.delete();
-      }
+      
+      matrix = [];
+      
       const srcPoints = cv.matFromArray(pts1.length, 1, cv.CV_32FC2, pts1.flat());
       const dstPoints = cv.matFromArray(pts2.length, 1, cv.CV_32FC2, pts2.flat());
       const mask = new cv.Mat();
-      homography = cv.findHomography(srcPoints, dstPoints, cv.RANSAC, 1.0, mask);
+      const homography = cv.findHomography(srcPoints, dstPoints, cv.RANSAC, 1.0, mask);
 
-      console.log(homography.data64F)
-      matrix = homography.clone();
+      for (let i = 0; i < homography.rows; i++) {
+        for (let j = 0; j < homography.cols; j++) {
+          matrix.push(homography.doubleAt(i, j)); // doubleAtで値を取得
+        }
+      }
+      console.log(matrix);
       // // マスクを適用して正しいマッチだけ描画
       // const inlierMatches = new cv.DMatchVector();
       // for (let i = 0; i < mask.rows; i++) {

@@ -60,6 +60,7 @@
   let match = null;
   let pts1 = [];
   let pts2 = [];
+  let matrix = null;
 
   function drawCameraToCanvas() {
 
@@ -115,11 +116,16 @@
       console.log(pts1.length);
       leng = pts1.length;
 
+      if(!(homography === null)){
+        matrix.delete();
+      }
       const srcPoints = cv.matFromArray(pts1.length, 1, cv.CV_32FC2, pts1.flat());
       const dstPoints = cv.matFromArray(pts2.length, 1, cv.CV_32FC2, pts2.flat());
       const mask = new cv.Mat();
-      const homography = cv.findHomography(srcPoints, dstPoints, cv.RANSAC, 1.0, mask);
+      homography = cv.findHomography(srcPoints, dstPoints, cv.RANSAC, 1.0, mask);
 
+      console.log(homography.data64F)
+      matrix = homography.clone();
       // // マスクを適用して正しいマッチだけ描画
       // const inlierMatches = new cv.DMatchVector();
       // for (let i = 0; i < mask.rows; i++) {
@@ -137,29 +143,6 @@
       match = result.clone();
 
       incri = 0;
-
-      nextbutton.addEventListener('click', function(){
-        const pt1 = pts1[incri];
-        const pt2 = pts2[incri];
-
-        console.log(incri);
-        console.log(leng);
-
-        console.log("b");
-        const offset = startdata.cols;
-        const color = new cv.Scalar(255, 0, 0, 255);
-        cv.circle(match, pt1, 5, color, 2);
-        cv.circle(match, { x: pt2.x + offset, y: pt2.y }, 5, color, 2);
-        cv.line(match, pt1, { x: pt2.x + offset, y: pt2.y }, color, 1);
-
-        console.log("c");
-        cv.imshow('movie', match);
-        cty.drawImage(movie, 0, 0, movie.width, movie.height, 0, 0, canvas.width, canvas.height);
-
-        incri = (incri + 1) % leng;
-
-        text.textContent = incri + "/" + (leng + 1);
-      });
 
       // const result = new cv.Mat();
       // cv.drawMatches(startdata, startkeypoints, equalized, keypoints, inlierMatches, result, [0, 255, 0, 255]);
@@ -194,6 +177,29 @@
     // 再度次のフレームを描画するためにrequestAnimationFrameを使う
     // requestAnimationFrame(drawCameraToCanvas);
   }
+
+  nextbutton.addEventListener('click', function(){
+    const pt1 = pts1[incri];
+    const pt2 = pts2[incri];
+
+    console.log(incri);
+    console.log(leng);
+
+    console.log("b");
+    const offset = startdata.cols;
+    const color = new cv.Scalar(255, 0, 0, 255);
+    cv.circle(match, pt1, 5, color, 2);
+    cv.circle(match, { x: pt2.x + offset, y: pt2.y }, 5, color, 2);
+    cv.line(match, pt1, { x: pt2.x + offset, y: pt2.y }, color, 1);
+
+    console.log("c");
+    cv.imshow('movie', match);
+    cty.drawImage(movie, 0, 0, movie.width, movie.height, 0, 0, canvas.width, canvas.height);
+
+    incri = (incri + 1) % leng;
+
+    text.textContent = incri + "/" + (leng + 1);
+  });
 
   function vkeybord() {
     console.log("バーチャルキーボード開始");

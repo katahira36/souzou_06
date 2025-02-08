@@ -185,8 +185,11 @@
   }
 
   nextbutton.addEventListener('click', function(){
-    let pt1 = [];
-    let pt2 = [];
+    // let pt1 = [];
+    // let pt2 = [];
+
+    let pt1 = [[0,0],[3,0],[0,2],[3,2]];
+    let pt2 = [[1,0],[2,0],[0,2],[3,2]];
 
     console.log(incri);
     console.log(leng);
@@ -204,8 +207,8 @@
       cv.circle(work, { x: pts2[a].x + offset, y: pts2[a].y }, 5, color, 2);
       cv.line(work, pts1[a], { x: pts2[a].x + offset, y: pts2[a].y }, color, 1);
 
-      pt1.push(pts1[a]);
-      pt2.push(pts2[a]);
+      // pt1.push(pts1[a]);
+      // pt2.push(pts2[a]);
     }
 
     let tmatrix = [];
@@ -228,8 +231,13 @@
     cty.drawImage(movie, 0, 0, movie.width, movie.height, 0, 0, canvas.width, canvas.height);
 
     text.textContent = (incri * 4 + 4) + "/" + (leng + 1);
-    
+
     incri = (incri + 1) % ((leng - 1) / 4 + 1);
+
+    srcPoints.delete();
+    dstPoints.delete();
+    mask.delete();
+    homography.delete();
   });
 
   function vkeybord() {

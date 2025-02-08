@@ -185,11 +185,11 @@
   }
 
   nextbutton.addEventListener('click', function(){
-    // let pt1 = [];
-    // let pt2 = [];
+    let pt1 = [];
+    let pt2 = [];
 
-    let pt1 = [[0,0],[3,0],[0,2],[3,2]];
-    let pt2 = [[1,0],[4,0],[1,2],[4,2]];
+    // let pt1 = [[0,0],[3,0],[0,2],[3,2]];
+    // let pt2 = [[1,0],[4,0],[1,2],[4,2]];
 
     console.log(incri);
     console.log(leng);
@@ -207,8 +207,8 @@
       cv.circle(work, { x: pts2[a].x + offset, y: pts2[a].y }, 5, color, 2);
       cv.line(work, pts1[a], { x: pts2[a].x + offset, y: pts2[a].y }, color, 1);
 
-      // pt1.push(pts1[a]);
-      // pt2.push(pts2[a]);
+      pt1.push(pts1[a]);
+      pt2.push(pts2[a]);
     }
 
     let tmatrix = [];
@@ -224,6 +224,8 @@
       }
       tmatrix.push(row);
     }
+    console.log(pt1);
+    console.log(pt2);
     console.log(tmatrix);
 
     console.log("c");

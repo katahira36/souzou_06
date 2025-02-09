@@ -185,102 +185,61 @@
   }
 
   nextbutton.addEventListener('click', function(){
-    // let pt1 = [];
-    // let pt2 = [];
-
-    let pt1 = [[98,143],[365,174],[309,261],[94,138]];
-    let pt2 = [[400,143],[365,174],[309,261],[94,138]];
+    const pt1 = pts1[incri];
+    const pt2 = pts2[incri];
 
     console.log(incri);
     console.log(leng);
 
     let work = match.clone();
-    // cv.imshow('movie', match);
 
     console.log("b");
     const offset = startdata.cols;
     const color = new cv.Scalar(255, 0, 0, 255);
-    for(let i = 0;i < 4;i++){
-      const a = (incri * 4 + i) % leng;
-
-      cv.circle(work, pts1[a], 5, color, 2);
-      cv.circle(work, { x: pts2[a].x + offset, y: pts2[a].y }, 5, color, 2);
-      cv.line(work, pts1[a], { x: pts2[a].x + offset, y: pts2[a].y }, color, 1);
-
-      // pt1.push({ x: Math.round(pts1[a].x), y: Math.round(pts1[a].y) });
-      // pt2.push({ x: Math.round(pts2[a].x), y: Math.round(pts2[a].y) });
-    }
-
-    // console.log(pts2);
-    // console.log(pt2);
-    // let flag = true;
-    let tmatrix = [];
-    // let point = [];
-    // for(let i1=0;(i1<3) && flag; i1++){
-    //   for(let i2=0;(i2<3) && flag; i2++){
-    //     for(let i3=0;(i3<3) && flag; i3++){
-    //       for(let i4=0;(i4<3) && flag; i4++){
-    //         for(let i5=0;(i5<3) && flag; i5++){
-    //           for(let i6=0;(i6<3) && flag; i6++){
-    //             for(let i7=0;(i7<3) && flag; i7++){
-    //               for(let i8=0;(i8<3) && flag; i8++){
-    //                 point = [];
-    //                 point.push({ x: (pt1[0].x + ((((i1 + 1) / 2)|0) * ((i1 & 1)? 1:-1))), y: (pt1[0].y +((((i5 + 1) / 2)|0) * ((i5 & 1)? 1:-1)))});
-    //                 point.push({ x: (pt1[1].x + ((((i2 + 1) / 2)|0) * ((i2 & 1)? 1:-1))), y: (pt1[1].y +((((i6 + 1) / 2)|0) * ((i6 & 1)? 1:-1)))});
-    //                 point.push({ x: (pt1[2].x + ((((i3 + 1) / 2)|0) * ((i3 & 1)? 1:-1))), y: (pt1[2].y +((((i7 + 1) / 2)|0) * ((i7 & 1)? 1:-1)))});
-    //                 point.push({ x: (pt1[3].x + ((((i4 + 1) / 2)|0) * ((i4 & 1)? 1:-1))), y: (pt1[3].y +((((i8 + 1) / 2)|0) * ((i8 & 1)? 1:-1)))});
-
-                    // const srcPoints = cv.matFromArray(point.length, 1, cv.CV_32FC2, point.flat());
-                    const srcPoints = cv.matFromArray(pt1.length, 1, cv.CV_32FC2, pt1.flat());
-                    const dstPoints = cv.matFromArray(pt2.length, 1, cv.CV_32FC2, pt2.flat());
-                    const mask = new cv.Mat();
-                    const homography = cv.findHomography(srcPoints, dstPoints, cv.RANSAC, 10000, mask);
-                    
-                    // console.log(point);
-                    // console.log(pt1[3].y);
-                    // console.log(pt1[3].y+((((i8 + 1) / 2)|0) * ((i8 & 1)? 1:-1)));
-                    // console.log({ x: (pt1[0].x + ((((i1 + 1) / 2)|0) * ((i1 & 1)? 1:-1))), y: (pt1[0].y +((((i5 + 1) / 2)|0) * ((i5 & 1)? 1:-1)))});
-                    // console.log(((((i8 + 1) / 2)|0) * ((i8 & 1)? 1:-1)));
-                    // console.log((((i8 + 1) / 2)|0));
-                    // console.log((((i8 & 1)? 1:-1)));
-                    // console.log(homography.doubleAt(0,0))
-
-                    // if(homography.doubleAt(0,0)){
-                    //   flag = false;
-                    // tmatrix = [];
-                      for (let i = 0; i < homography.rows; i++) {
-                        let row = [];
-                        for (let j = 0; j < homography.cols; j++) {
-                          row.push(homography.doubleAt(i, j)); // doubleAtで値を取得
-                        }
-                        tmatrix.push(row);
-                      }
-                    // }
-                    console.log(tmatrix);
-
-                    srcPoints.delete();
-                    dstPoints.delete();
-                    mask.delete();
-                    homography.delete();
-    //               }
-    //             }
-    //           }
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
-    console.log(point);
-    console.log(pt2);
-    console.log(tmatrix);
+    cv.circle(work, pt1, 5, color, 2);
+    cv.circle(work, { x: pt2.x + offset, y: pt2.y }, 5, color, 2);
+    cv.line(work, pt1, { x: pt2.x + offset, y: pt2.y }, color, 1);
 
     console.log("c");
     cv.imshow('movie', work);
     cty.drawImage(movie, 0, 0, movie.width, movie.height, 0, 0, canvas.width, canvas.height);
 
-    text.textContent = (incri * 4 + 4) + "/" + (leng + 1);
+    incri = (incri + 1) % leng;
 
-    incri = (incri + 1) % ((leng - 1) / 4 + 1);
+    text.textContent = incri + "/" + (leng + 1);
+
+    let p1 = [];
+    let p2 = [];
+    for(i=0; i< leng ;i++){
+      let a = [];
+      let b = [];
+      a.push(pts1[i].x);
+      a.push(pts1[i].y);
+      b.push(pts2[i].x);
+      b.push(pts2[i].y);
+      p1.push(a);
+      p2.push(b);
+    }
+
+    let tmatrix = [];
+    const srcPoints = cv.matFromArray(p1.length, 1, cv.CV_32FC2, p1.flat());
+    const dstPoints = cv.matFromArray(p2.length, 1, cv.CV_32FC2, p2.flat());
+    const mask = new cv.Mat();
+    const homography = cv.findHomography(srcPoints, dstPoints, cv.RANSAC, 10000, mask);
+
+    for (let i = 0; i < homography.rows; i++) {
+      let row = [];
+      for (let j = 0; j < homography.cols; j++) {
+        row.push(homography.doubleAt(i, j)); // doubleAtで値を取得
+      }
+      tmatrix.push(row);
+    }
+    console.log(tmatrix);
+
+    srcPoints.delete();
+    dstPoints.delete();
+    mask.delete();
+    homography.delete();
   });
 
   function vkeybord() {

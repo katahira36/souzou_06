@@ -211,6 +211,7 @@
       pt2.push({ x: Math.round(pts2[a].x), y: Math.round(pts2[a].y) });
     }
 
+    console.log(pt2);
     let flag = true;
     let tmatrix = [];
     let point = [];
@@ -233,9 +234,9 @@
                     const homography = cv.findHomography(srcPoints, dstPoints, cv.RANSAC, 10000, mask);
                     
                     console.log(point);
-                    console.log(pt2);
-                    console.log(point);
-                    console.log(i1+i2+i3+i4+i5+i6+i7+i8);
+                    console.log(((((i1 + 1) / 2)|0) * ((i1 & 1)? 1:-1)));
+                    console.log((((i1 + 1) / 2)|0));
+                    console.log((((i1 & 1)? 1:-1)));
 
                     if(homography.doubleAt(0,0)){
                       flag = false;

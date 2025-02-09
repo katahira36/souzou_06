@@ -231,6 +231,9 @@
                     const dstPoints = cv.matFromArray(pt2.length, 1, cv.CV_32FC2, pt2.flat());
                     const mask = new cv.Mat();
                     const homography = cv.findHomography(srcPoints, dstPoints, cv.RANSAC, 10000, mask);
+                    
+                    console.log(point);
+                    console.log(pt2);
 
                     if(homography.doubleAt(0,0)){
                       flag = false;

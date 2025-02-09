@@ -185,11 +185,11 @@
   }
 
   nextbutton.addEventListener('click', function(){
-    let pt1 = [];
-    let pt2 = [];
+    // let pt1 = [];
+    // let pt2 = [];
 
-    // let pt1 = [[0,0],[3,0],[0,2],[3,2]];
-    // let pt2 = [[1,0],[4,0],[1,2],[4,2]];
+    let pt1 = [[98,143],[365,174],[309,261],[94,138]];
+    let pt2 = [[98,143],[365,174],[309,261],[94,138]];
 
     console.log(incri);
     console.log(leng);
@@ -207,46 +207,47 @@
       cv.circle(work, { x: pts2[a].x + offset, y: pts2[a].y }, 5, color, 2);
       cv.line(work, pts1[a], { x: pts2[a].x + offset, y: pts2[a].y }, color, 1);
 
-      pt1.push({ x: Math.round(pts1[a].x), y: Math.round(pts1[a].y) });
-      pt2.push({ x: Math.round(pts2[a].x), y: Math.round(pts2[a].y) });
+      // pt1.push({ x: Math.round(pts1[a].x), y: Math.round(pts1[a].y) });
+      // pt2.push({ x: Math.round(pts2[a].x), y: Math.round(pts2[a].y) });
     }
 
-    console.log(pts2);
-    console.log(pt2);
-    let flag = true;
+    // console.log(pts2);
+    // console.log(pt2);
+    // let flag = true;
     let tmatrix = [];
-    let point = [];
-    for(let i1=0;(i1<3) && flag; i1++){
-      for(let i2=0;(i2<3) && flag; i2++){
-        for(let i3=0;(i3<3) && flag; i3++){
-          for(let i4=0;(i4<3) && flag; i4++){
-            for(let i5=0;(i5<3) && flag; i5++){
-              for(let i6=0;(i6<3) && flag; i6++){
-                for(let i7=0;(i7<3) && flag; i7++){
-                  for(let i8=0;(i8<3) && flag; i8++){
-                    point = [];
-                    point.push({ x: (pt1[0].x + ((((i1 + 1) / 2)|0) * ((i1 & 1)? 1:-1))), y: (pt1[0].y +((((i5 + 1) / 2)|0) * ((i5 & 1)? 1:-1)))});
-                    point.push({ x: (pt1[1].x + ((((i2 + 1) / 2)|0) * ((i2 & 1)? 1:-1))), y: (pt1[1].y +((((i6 + 1) / 2)|0) * ((i6 & 1)? 1:-1)))});
-                    point.push({ x: (pt1[2].x + ((((i3 + 1) / 2)|0) * ((i3 & 1)? 1:-1))), y: (pt1[2].y +((((i7 + 1) / 2)|0) * ((i7 & 1)? 1:-1)))});
-                    point.push({ x: (pt1[3].x + ((((i4 + 1) / 2)|0) * ((i4 & 1)? 1:-1))), y: (pt1[3].y +((((i8 + 1) / 2)|0) * ((i8 & 1)? 1:-1)))});
+    // let point = [];
+    // for(let i1=0;(i1<3) && flag; i1++){
+    //   for(let i2=0;(i2<3) && flag; i2++){
+    //     for(let i3=0;(i3<3) && flag; i3++){
+    //       for(let i4=0;(i4<3) && flag; i4++){
+    //         for(let i5=0;(i5<3) && flag; i5++){
+    //           for(let i6=0;(i6<3) && flag; i6++){
+    //             for(let i7=0;(i7<3) && flag; i7++){
+    //               for(let i8=0;(i8<3) && flag; i8++){
+    //                 point = [];
+    //                 point.push({ x: (pt1[0].x + ((((i1 + 1) / 2)|0) * ((i1 & 1)? 1:-1))), y: (pt1[0].y +((((i5 + 1) / 2)|0) * ((i5 & 1)? 1:-1)))});
+    //                 point.push({ x: (pt1[1].x + ((((i2 + 1) / 2)|0) * ((i2 & 1)? 1:-1))), y: (pt1[1].y +((((i6 + 1) / 2)|0) * ((i6 & 1)? 1:-1)))});
+    //                 point.push({ x: (pt1[2].x + ((((i3 + 1) / 2)|0) * ((i3 & 1)? 1:-1))), y: (pt1[2].y +((((i7 + 1) / 2)|0) * ((i7 & 1)? 1:-1)))});
+    //                 point.push({ x: (pt1[3].x + ((((i4 + 1) / 2)|0) * ((i4 & 1)? 1:-1))), y: (pt1[3].y +((((i8 + 1) / 2)|0) * ((i8 & 1)? 1:-1)))});
 
-                    const srcPoints = cv.matFromArray(point.length, 1, cv.CV_32FC2, point.flat());
+                    // const srcPoints = cv.matFromArray(point.length, 1, cv.CV_32FC2, point.flat());
+                    const srcPoints = cv.matFromArray(pt1.length, 1, cv.CV_32FC2, pt1.flat());
                     const dstPoints = cv.matFromArray(pt2.length, 1, cv.CV_32FC2, pt2.flat());
                     const mask = new cv.Mat();
                     const homography = cv.findHomography(srcPoints, dstPoints, cv.RANSAC, 10000, mask);
                     
-                    console.log(point);
-                    console.log(pt1[3].y);
-                    console.log(pt1[3].y+((((i8 + 1) / 2)|0) * ((i8 & 1)? 1:-1)));
-                    console.log({ x: (pt1[0].x + ((((i1 + 1) / 2)|0) * ((i1 & 1)? 1:-1))), y: (pt1[0].y +((((i5 + 1) / 2)|0) * ((i5 & 1)? 1:-1)))});
-                    console.log(((((i8 + 1) / 2)|0) * ((i8 & 1)? 1:-1)));
-                    console.log((((i8 + 1) / 2)|0));
-                    console.log((((i8 & 1)? 1:-1)));
-                    console.log(homography.doubleAt(0,0))
+                    // console.log(point);
+                    // console.log(pt1[3].y);
+                    // console.log(pt1[3].y+((((i8 + 1) / 2)|0) * ((i8 & 1)? 1:-1)));
+                    // console.log({ x: (pt1[0].x + ((((i1 + 1) / 2)|0) * ((i1 & 1)? 1:-1))), y: (pt1[0].y +((((i5 + 1) / 2)|0) * ((i5 & 1)? 1:-1)))});
+                    // console.log(((((i8 + 1) / 2)|0) * ((i8 & 1)? 1:-1)));
+                    // console.log((((i8 + 1) / 2)|0));
+                    // console.log((((i8 & 1)? 1:-1)));
+                    // console.log(homography.doubleAt(0,0))
 
                     // if(homography.doubleAt(0,0)){
                     //   flag = false;
-                    tmatrix = [];
+                    // tmatrix = [];
                       for (let i = 0; i < homography.rows; i++) {
                         let row = [];
                         for (let j = 0; j < homography.cols; j++) {
@@ -261,14 +262,14 @@
                     dstPoints.delete();
                     mask.delete();
                     homography.delete();
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+    //               }
+    //             }
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
     console.log(point);
     console.log(pt2);
     console.log(tmatrix);

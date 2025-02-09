@@ -211,6 +211,9 @@
       pt2.push({ x: Math.round(pts2[a].x), y: Math.round(pts2[a].y) });
     }
 
+    const test = [[NaN,NaN],[NaN,NaN]];
+    console.log(!test[0][0]);
+    console.log(!test);
     let tmatrix = [];
     let point = [];
     for(let i1=0;(i1<3) && (!tmatrix[0][0]); i1++){
@@ -230,7 +233,7 @@
                     const dstPoints = cv.matFromArray(pt2.length, 1, cv.CV_32FC2, pt2.flat());
                     const mask = new cv.Mat();
                     const homography = cv.findHomography(srcPoints, dstPoints, cv.RANSAC, 10000, mask);
-                    
+
                     for (let i = 0; (i < homography.rows) && (homography.doubleAt(0,0)); i++) {
                       let row = [];
                       for (let j = 0; j < homography.cols; j++) {

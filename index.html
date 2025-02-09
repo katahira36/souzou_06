@@ -234,9 +234,10 @@
                     const homography = cv.findHomography(srcPoints, dstPoints, cv.RANSAC, 10000, mask);
                     
                     console.log(point);
-                    console.log(((((i1 + 1) / 2)|0) * ((i1 & 1)? 1:-1)));
-                    console.log((((i1 + 1) / 2)|0));
-                    console.log((((i1 & 1)? 1:-1)));
+                    console.log(pt1[3].y);
+                    console.log(((((i8 + 1) / 2)|0) * ((i8 & 1)? 1:-1)));
+                    console.log((((i8 + 1) / 2)|0));
+                    console.log((((i8 & 1)? 1:-1)));
 
                     if(homography.doubleAt(0,0)){
                       flag = false;

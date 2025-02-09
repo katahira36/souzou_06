@@ -214,7 +214,7 @@
     console.log(pts2);
     console.log(pt2);
     let flag = true;
-    // let tmatrix = [];
+    let tmatrix = [];
     let point = [];
     for(let i1=0;(i1<3) && flag; i1++){
       for(let i2=0;(i2<3) && flag; i2++){
@@ -246,7 +246,7 @@
 
                     // if(homography.doubleAt(0,0)){
                     //   flag = false;
-                    let tmatrix = [];
+                    tmatrix = [];
                       for (let i = 0; i < homography.rows; i++) {
                         let row = [];
                         for (let j = 0; j < homography.cols; j++) {

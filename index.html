@@ -244,8 +244,8 @@
                     console.log((((i8 & 1)? 1:-1)));
                     console.log(homography.doubleAt(0,0))
 
-                    if(homography.doubleAt(0,0)){
-                      flag = false;
+                    // if(homography.doubleAt(0,0)){
+                    //   flag = false;
                       for (let i = 0; i < homography.rows; i++) {
                         let row = [];
                         for (let j = 0; j < homography.cols; j++) {
@@ -253,7 +253,8 @@
                         }
                         tmatrix.push(row);
                       }
-                    }
+                    // }
+                    console.log(tmatrix);
                     
                     srcPoints.delete();
                     dstPoints.delete();

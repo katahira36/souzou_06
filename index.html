@@ -207,24 +207,51 @@
       cv.circle(work, { x: pts2[a].x + offset, y: pts2[a].y }, 5, color, 2);
       cv.line(work, pts1[a], { x: pts2[a].x + offset, y: pts2[a].y }, color, 1);
 
-      pt1.push(pts1[a]);
-      pt2.push(pts2[a]);
+      pt1.push({ x: Math.round(pts1[a].x), y: Math.round(pts1[a].y) });
+      pt2.push({ x: Math.round(pts2[a].x), y: Math.round(pts2[a].y) });
     }
 
     let tmatrix = [];
-    const srcPoints = cv.matFromArray(pt1.length, 1, cv.CV_32FC2, pt1.flat());
-    const dstPoints = cv.matFromArray(pt2.length, 1, cv.CV_32FC2, pt2.flat());
-    const mask = new cv.Mat();
-    const homography = cv.findHomography(srcPoints, dstPoints, cv.RANSAC, 10000, mask);
+    let point = [];
+    for(let i1=0;(i1<3) && (!tmatrix[0][0]); i1++){
+      for(let i2=0;(i2<3) && (!tmatrix[0][0]); i2++){
+        for(let i3=0;(i3<3) && (!tmatrix[0][0]); i3++){
+          for(let i4=0;(i4<3) && (!tmatrix[0][0]); i4++){
+            for(let i5=0;(i5<3) && (!tmatrix[0][0]); i5++){
+              for(let i6=0;(i6<3) && (!tmatrix[0][0]); i6++){
+                for(let i7=0;(i7<3) && (!tmatrix[0][0]); i7++){
+                  for(let i8=0;(i8<3) && (!tmatrix[0][0]); i8++){
+                    point[0] = { x: pt1[0].x + (((i1 + 1) / 2) * ((i1 & 1)? 1:-1)), y: pt1[0].y +(((i5 + 1) / 2) * ((i5 & 1)? 1:-1))}
+                    point[1] = { x: pt1[1].x + (((i2 + 1) / 2) * ((i1 & 1)? 1:-1)), y: pt1[1].y +(((i6 + 1) / 2) * ((i5 & 1)? 1:-1))}
+                    point[2] = { x: pt1[2].x + (((i3 + 1) / 2) * ((i1 & 1)? 1:-1)), y: pt1[2].y +(((i7 + 1) / 2) * ((i5 & 1)? 1:-1))}
+                    point[3] = { x: pt1[3].x + (((i4 + 1) / 2) * ((i1 & 1)? 1:-1)), y: pt1[3].y +(((i8 + 1) / 2) * ((i5 & 1)? 1:-1))}
 
-    for (let i = 0; i < homography.rows; i++) {
-      let row = [];
-      for (let j = 0; j < homography.cols; j++) {
-        row.push(homography.doubleAt(i, j)); // doubleAtで値を取得
+                    const srcPoints = cv.matFromArray(point.length, 1, cv.CV_32FC2, point.flat());
+                    const dstPoints = cv.matFromArray(pt2.length, 1, cv.CV_32FC2, pt2.flat());
+                    const mask = new cv.Mat();
+                    const homography = cv.findHomography(srcPoints, dstPoints, cv.RANSAC, 10000, mask);
+                    
+                    for (let i = 0; (i < homography.rows) && (homography.doubleAt(0,0)); i++) {
+                      let row = [];
+                      for (let j = 0; j < homography.cols; j++) {
+                        row.push(homography.doubleAt(i, j)); // doubleAtで値を取得
+                      }
+                      tmatrix.push(row);
+                    }
+                    
+                    srcPoints.delete();
+                    dstPoints.delete();
+                    mask.delete();
+                    homography.delete();
+                  }
+                }
+              }
+            }
+          }
+        }
       }
-      tmatrix.push(row);
     }
-    console.log(pt1);
+    console.log(point);
     console.log(pt2);
     console.log(tmatrix);
 
@@ -235,11 +262,6 @@
     text.textContent = (incri * 4 + 4) + "/" + (leng + 1);
 
     incri = (incri + 1) % ((leng - 1) / 4 + 1);
-
-    srcPoints.delete();
-    dstPoints.delete();
-    mask.delete();
-    homography.delete();
   });
 
   function vkeybord() {

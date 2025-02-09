@@ -145,17 +145,17 @@
       }
       console.log(homography.rows);
       console.log(matrix);
-      // // マスクを適用して正しいマッチだけ描画
-      // const inlierMatches = new cv.DMatchVector();
-      // for (let i = 0; i < mask.rows; i++) {
-      //   if (mask.data[i]) {
-      //     inlierMatches.push_back(goodMatches.get(i));
-      //   }
-      // }
+      // マスクを適用して正しいマッチだけ描画
+      const inlierMatches = new cv.DMatchVector();
+      for (let i = 0; i < mask.rows; i++) {
+        if (mask.data[i]) {
+          inlierMatches.push_back(goodMatches.get(i));
+        }
+      }
 
       const result = new cv.Mat();
       // cv.hconcat([startdata, equalized], result);
-      cv.drawMatches(startdata, startkeypoints, equalized, keypoints, goodMatches, result, [0, 255, 0, 255]);
+      cv.drawMatches(startdata, startkeypoints, equalized, keypoints, inlierMatches, result, [0, 255, 0, 255]);
       if(!(match === null)){
         match.delete();
       }
@@ -177,9 +177,7 @@
       mask.delete();
       homography.delete();
       result.delete();
-      // inlierMatches.delete();
-      // result.delete();
-
+      inlierMatches.delete();
     }
 
     // 結果をCanvasに描画

@@ -3,7 +3,7 @@
 <head>
   <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" charset='utf-8'.> -->
   <meta charset='utf8'>
-  <!-- <style >.hogehoge {
+  <style >.hogehoge {
     padding: 20px;
     margin: 20px;
   }
@@ -11,7 +11,7 @@
   width: 100%;
   height: 100%;
 } */
-  </style> -->
+  </style>
   <script async src="opencv.js" type="text/javascript" onload="OpenCvReady();"></script>
   <!-- <script async src="https://docs.opencv.org/4.x/opencv.js" type="text/javascript" onload="OpenCvReady();"></script> -->
 </head>
@@ -52,182 +52,220 @@
 
   const text = document.getElementById("text");
 
+  let flagstart = false;
+  let flagpoint = false;
+  let selectbord = 0;
+  let keybordpoint = [];
+
   let startdata = null;
   let startkeypoints = null;
   let startdescriptors = null;
-  var incri = 0;
-  var leng = 0;
-  let match = null;
-  let pts1 = [];
-  let pts2 = [];
-  let matrix = [];
 
   function drawCameraToCanvas() {
 
-    // 現在のフレームを<canvas>に描画
-    movie.width = canvas.width/2;
-    ctx.drawImage(video, 0, 0, video.width, video.height, 0, 0, movie.width, movie.height);
-    let src = cv.imread(movie);
+    if(selectbord){
+      // 現在のフレームを<canvas>に描画
+      cty.drawImage(video, 0, 0, video.width, video.height, 0, 0, canvas.width, canvas.height);
+      let srcresult = cv.imread(canvas);
 
-    // cty.drawImage(video, 0, 0, video.width, video.height, 0, 0, canvas.width, canvas.height);
-    // let cav = cv.imread(movie);
+      ctx.drawImage(video, 0, 0, video.width, video.height, 0, 0, movie.width, movie.height);
+      let src = cv.imread(movie);
 
-    let gray = new cv.Mat();
-    // グレースケールに変換（特徴点検出に適した前処理）
-    cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+      let gray = new cv.Mat();
+      // グレースケールに変換（特徴点検出に適した前処理）
+      cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
 
-    let equalized = new cv.Mat();
-    // ヒストグラム均等化（コントラストをハッキリさせる）
-    cv.equalizeHist(gray, equalized);
+      let equalized = new cv.Mat();
+      // ヒストグラム均等化（コントラストをハッキリさせる）
+      cv.equalizeHist(gray, equalized);
 
-    // ORB検出器を作成
-    const orb = new cv.ORB();
-    let keypoints = new cv.KeyPointVector();
-    let descriptors = new cv.Mat();
+      // ORB検出器を作成
+      const orb = new cv.ORB();
+      let keypoints = new cv.KeyPointVector();
+      let descriptors = new cv.Mat();
 
-    // // 特徴点を検出
-    orb.detectAndCompute(equalized, new cv.Mat(), keypoints, descriptors);
+      // // 特徴点を検出
+      orb.detectAndCompute(equalized, new cv.Mat(), keypoints, descriptors);
 
-    if (startdata === null) {
-      startdata = equalized.clone();
-      startkeypoints = keypoints.clone();
-      startdescriptors = descriptors.clone();
-    } else{
-      // KNNマッチング
-      const bf = new cv.BFMatcher(cv.NORM_HAMMING, false); // クロスチェックを無効に設定
-      const knnMatches = new cv.DMatchVectorVector();
-      bf.knnMatch(startdescriptors, descriptors, knnMatches, 2); // k=2
+      if (startdata === null) {
+        startdata = equalized.clone();
+        startkeypoints = keypoints.clone();
+        startdescriptors = descriptors.clone();
+        flagpoint = false;
+      } else{
+        // KNNマッチング
+        const bf = new cv.BFMatcher(cv.NORM_HAMMING, false); // クロスチェックを無効に設定
+        const knnMatches = new cv.DMatchVectorVector();
+        bf.knnMatch(startdescriptors, descriptors, knnMatches, 2); // k=2
 
-      // Loweの比率テスト
-      leng = 0;
-      const goodMatches = new cv.DMatchVector();
-      pts1 = [];
-      pts2 = [];
-      for (let i = 0; i < knnMatches.size(); i++) {
-        const m = knnMatches.get(i).get(0); // 最良のマッチ
-        const n = knnMatches.get(i).get(1); // 次点のマッチ
-        if (m.distance < 0.75 * n.distance) { // 比率テスト: 0.75が一般的
-          goodMatches.push_back(m);
-          pts1.push(startkeypoints.get(m.queryIdx).pt);
-          pts2.push(keypoints.get(m.trainIdx).pt);
+        // Loweの比率テスト
+        let leng = 0;
+        const goodMatches = new cv.DMatchVector();
+        let pts1 = [];
+        let pts2 = [];
+        for (let i = 0; i < knnMatches.size(); i++) {
+          const m = knnMatches.get(i).get(0); // 最良のマッチ
+          const n = knnMatches.get(i).get(1); // 次点のマッチ
+          if (m.distance < 0.75 * n.distance) { // 比率テスト: 0.75が一般的
+            goodMatches.push_back(m);
+            pts1.push(startkeypoints.get(m.queryIdx).pt);
+            pts2.push(keypoints.get(m.trainIdx).pt);
+          }
         }
-      }
 
-      console.log(pts1.length);
-      leng = pts1.length;
+        console.log(pts1.length);
+        leng = pts1.length;
 
-      let p1 = [];
-      let p2 = [];
-      for(i=0; i< leng ;i++){
-        let a = [];
-        let b = [];
-        a.push(pts1[i].x);
-        a.push(pts1[i].y);
-        b.push(pts2[i].x);
-        b.push(pts2[i].y);
-        p1.push(a);
-        p2.push(b);
-      }
-      
-      matrix = [];
-      
-      const srcPoints = cv.matFromArray(p1.length, 1, cv.CV_32FC2, p1.flat());
-      const dstPoints = cv.matFromArray(p2.length, 1, cv.CV_32FC2, p2.flat());
-      const mask = new cv.Mat();
-      const homography = cv.findHomography(srcPoints, dstPoints, cv.RANSAC, 5, mask);
-
-      for (let i = 0; i < homography.rows; i++) {
-        let row = [];
-        for (let j = 0; j < homography.cols; j++) {
-          row.push(homography.doubleAt(i, j)); // doubleAtで値を取得
+        let p1 = [];
+        let p2 = [];
+        for(i=0; i< leng ;i++){
+          let a = [];
+          let b = [];
+          a.push(pts1[i].x);
+          a.push(pts1[i].y);
+          b.push(pts2[i].x);
+          b.push(pts2[i].y);
+          p1.push(a);
+          p2.push(b);
         }
-        matrix.push(row);
-      }
-      console.log(homography.rows);
-      console.log(matrix);
-      // マスクを適用して正しいマッチだけ描画
-      let count = 0;
-      const inlierMatches = new cv.DMatchVector();
-      for (let i = 0; i < mask.rows; i++) {
-        if (mask.data[i]) {
-          count++;
-          inlierMatches.push_back(goodMatches.get(i));
+        
+        let matrix = [];
+        
+        const srcPoints = cv.matFromArray(p1.length, 1, cv.CV_32FC2, p1.flat());
+        const dstPoints = cv.matFromArray(p2.length, 1, cv.CV_32FC2, p2.flat());
+        const mask = new cv.Mat();
+        const homography = cv.findHomography(srcPoints, dstPoints, cv.RANSAC, 5, mask);
+
+        for (let i = 0; i < homography.rows; i++) {
+          let row = [];
+          for (let j = 0; j < homography.cols; j++) {
+            row.push(homography.doubleAt(i, j)); // doubleAtで値を取得
+          }
+          matrix.push(row);
         }
+        console.log(homography.rows);
+        console.log(matrix);
+
+        // マスクを適用して正しいマッチを数える
+        let count = 0;
+        // const inlierMatches = new cv.DMatchVector();
+        for (let i = 0; i < mask.rows; i++) {
+          if (mask.data[i]) {
+            count++;
+            // inlierMatches.push_back(goodMatches.get(i));
+          }
+        }
+        text.textContent = count;
+
+        let flagp = 0;
+        if(flagpoint){
+          flagp = 1;
+          flagpoint = false;
+
+          startdata.delete();
+          startkeypoints.delete();
+          startdescriptors.delete();
+
+          startdata = equalized.clone();
+          startkeypoints = keypoints.clone();
+          startdescriptors = descriptors.clone();
+        }
+
+        if(count > 10){
+          //ずれを修正
+          for(i=0; i < (selectbord - flagp) ;i++){
+            let xy1 = [];
+            for(j=0;j<3;j++){
+              const sum = matrix[j][0] * keybordpoint[i][0] * movie.width / canvas.width + matrix[j][1] * keybordpoint[i][1] *movie.height /canvas.height + matrix[j][2];
+              xy1.push(sum);
+            }
+            keybordpoint[i][0] = xy1[0] * canvas.width / movie.width / xy1[2];
+            keybordpoint[i][1] = xy1[1] *canvas.height /movie.height / xy1[2];
+          }
+          
+          if(selectbord < 4){
+            const color = new cv.Scalar(255, 0, 0, 255);
+
+            for(i=0; i < selectbord ;i++){
+              cv.circle(srcresult, {x: keybordpoint[i][0], y: keybordpoint[i][1]}, 5, color, 2);
+            }
+          }else{
+            if(flagp){
+              //バブルソート
+              for(j=3;j>0;j--){
+                if((keybordpoint[j-1][0] + keybordpoint[j-1][1]) > (keybordpoint[j][0] + keybordpoint[j][1])){
+                  let temp = keybordpoint[j];
+                  keybordpoint[j] = keybordpoint[j-1];
+                  keybordpoint[j-1] = temp;
+                }
+              }
+              for(j=1;j<3;j++){
+                if((keybordpoint[j+1][0] + keybordpoint[j+1][1]) < (keybordpoint[j][0] + keybordpoint[j][1])){
+                  let temp = keybordpoint[j];
+                  keybordpoint[j] = keybordpoint[j+1];
+                  keybordpoint[j+1] = temp;
+                }
+              }
+              if(keybordpoint[1][1] > keybordpoint[2][1]){
+                let temp = keybordpoint[1];
+                keybordpoint[1] = keybordpoint[2];
+                keybordpoint[2] = temp;
+              }
+              let temp1 = keybordpoint[3];
+                keybordpoint[3] = keybordpoint[2];
+                keybordpoint[2] = temp1;
+            }
+            let pts = cv.matFromArray(1, 4, cv.CV_32SC2, keybordpoint.flat()); // 4点の配列をOpenCV形式に変換
+            let isClosed = true; // 閉じた図形を描画する
+            cv.polylines(srcresult, [pts], isClosed, new cv.Scalar(...[0, 255, 0]), 2);
+            pts.delete(); // メモリ解放
+          }
+        }
+        cv.imshow('canvas', srcresult);
+
+        bf.delete();
+        knnMatches.delete();
+        goodMatches.delete();
+        srcPoints.delete();
+        dstPoints.delete();
+        mask.delete();
+        homography.delete();
+        // inlierMatches.delete();
       }
-      text.textContent = count;
 
-      const result = new cv.Mat();
-      // cv.hconcat([startdata, equalized], result);
-      cv.drawMatches(startdata, startkeypoints, equalized, keypoints, inlierMatches, result, [0, 255, 0, 255]);
-      if(!(match === null)){
-        match.delete();
-      }
-      match = result.clone();
+      // メモリの解放
+      src.delete();
+      gray.delete();
+      equalized.delete();
+      keypoints.delete();
+      descriptors.delete();
+      orb.delete();
+      srcresult.delete();
 
-      incri = 0;
-
-      // const result = new cv.Mat();
-      // cv.drawMatches(startdata, startkeypoints, equalized, keypoints, inlierMatches, result, [0, 255, 0, 255]);
-      // cv.drawMatches(startdata, startkeypoints, equalized, keypoints, goodMatches, result, [0, 255, 0, 255]);
-
-      // cv.imshow('movie', result);
-
-      bf.delete();
-      knnMatches.delete();
-      goodMatches.delete();
-      srcPoints.delete();
-      dstPoints.delete();
-      mask.delete();
-      homography.delete();
-      result.delete();
-      inlierMatches.delete();
+    }else{
+      cty.drawImage(video, 0, 0, video.width, video.height, 0, 0, canvas.width, canvas.height);
     }
-
-    // 結果をCanvasに描画
-    cty.drawImage(movie, 0, 0, movie.width, movie.height, 0, 0, canvas.width, canvas.height);
-
-    // メモリの解放
-    src.delete();
-    gray.delete();
-    equalized.delete();
-    keypoints.delete();
-    descriptors.delete();
-    orb.delete();
 
     // 再度次のフレームを描画するためにrequestAnimationFrameを使う
-    // requestAnimationFrame(drawCameraToCanvas);
+    requestAnimationFrame(drawCameraToCanvas);
   }
 
-  nextbutton.addEventListener('click', function(){
-    const pt1 = pts1[incri];
-    const pt2 = pts2[incri];
+  canvas.addEventListener('click', event =>{
+    if(flagstart){
+      const rect = canvas.getBoundingClientRect();
+      let kbp = [];
 
-    console.log(incri);
-    console.log(leng);
+      kbp.push((event.clientX - rect.left) * canvas.width / canvas.clientWidth);
+      kbp.push((event.clientY - rect.top) * canvas.height /canvas.clientHeight);
+      keybordpoint.push(kbp);
 
-    let work = match.clone();
+      selectbord++;
+      flagpoint = true;
 
-    console.log("b");
-    const offset = startdata.cols;
-    const color = new cv.Scalar(255, 0, 0, 255);
-    cv.circle(work, pt1, 5, color, 2);
-    cv.circle(work, { x: pt2.x + offset, y: pt2.y }, 5, color, 2);
-    cv.line(work, pt1, { x: pt2.x + offset, y: pt2.y }, color, 1);
-
-    console.log("c");
-    cv.imshow('movie', work);
-    cty.drawImage(movie, 0, 0, movie.width, movie.height, 0, 0, canvas.width, canvas.height);
-
-    incri = (incri + 1) % leng;
-
-    let xy1 = [];
-    for(i=0;i<3;i++){
-      const sum = matrix[i][0] * pt1.x + matrix[i][1] * pt1.y + matrix[i][2];
-      xy1.push(sum);
+      if(selectbord >= 4){
+        flagstart = false;
+      }
     }
-    console.log(pt1);
-    console.log("x: "+ xy1[0] / xy1[2] +", y: "+ xy1[1] / xy1[2]);
-    console.log(pt2);
   });
 
   function vkeybord() {
@@ -250,7 +288,6 @@
 
       // movie.width = movie.height *video.width /video.height
       canvas.height = canvas.width * video.height / video.width;
-      canvas.width = canvas.width *2;
       
       movie.width = 400;
       movie.height = movie.width *video.height /video.width;
@@ -288,7 +325,9 @@
     video.muted = 'true';
     movie.style = 'display:none';
 
-    startbutton.addEventListener('click', drawCameraToCanvas);
+    startbutton.addEventListener('click', function(){
+      flagstart = true;
+    });
     vkeybord();
   })
 

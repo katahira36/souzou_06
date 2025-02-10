@@ -217,13 +217,13 @@
             }
             console.log(keybordpoint);
 
-            // let pts = cv.matFromArray(1, 4, cv.CV_32FC2, keybordpoint.flat()); // 4点の配列をOpenCV形式に変換
+            let pts = cv.matFromArray(1, keybordpoint.length, cv.CV_32FC2, keybordpoint.flat()); // 4点の配列をOpenCV形式に変換
             let isClosed = true; // 閉じた図形を描画する
             const color = new cv.Scalar(255, 0, 0, 100);
-            // console.log(pts);
+            console.log(pts);
 
-            cv.polylines(srcresult, keybordpoint, isClosed, color, 2);
-            // pts.delete(); // メモリ解放
+            cv.polylines(srcresult, [pts], isClosed, color, 2);
+            pts.delete(); // メモリ解放
           }
         }
         console.log("x")

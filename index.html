@@ -222,7 +222,7 @@
             const color = new cv.Scalar(255, 0, 0, 100);
             console.log(isClosed);
 
-            cv.polylines(srcresult, [pts], isClosed, color, 2);
+            cv.polylines(srcresult, pts, isClosed, color, 2);
             pts.delete(); // メモリ解放
           }
         }

@@ -219,10 +219,9 @@
 
             let pts = cv.matFromArray(1, 4, cv.CV_32SC2, keybordpoint.flat()); // 4点の配列をOpenCV形式に変換
             let isClosed = true; // 閉じた図形を描画する
-            const color = [0, 255, 0];
-            console.log(color);
+            console.log(isClosed);
 
-            cv.polylines(srcresult, [pts], isClosed, new cv.Scalar(...color), 2);
+            cv.polylines(srcresult, [pts], isClosed, new cv.Scalar(255, 0, 0, 100), 2);
             pts.delete(); // メモリ解放
           }
         }

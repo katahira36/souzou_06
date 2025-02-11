@@ -129,10 +129,9 @@
           p2.push(b);
         }
         
+        let matrix = [];
         let count = 0;
         if(leng > 4){
-          let matrix = [];
-
           const srcPoints = cv.matFromArray(p1.length, 1, cv.CV_32FC2, p1.flat());
           const dstPoints = cv.matFromArray(p2.length, 1, cv.CV_32FC2, p2.flat());
           const mask = new cv.Mat();

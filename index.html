@@ -23,16 +23,18 @@
 <canvas id="movie" ></canvas>
 <canvas id="canvas"></canvas>
 
+<img id="inputImage" src="keybordinv.png" style="display: none;">
+
 <p id="text"></p>
 
 <button class="hogehoge" type="button" id="start">start</button>
-<button class="hogehoge" type="button" id="stop">next</button>
+<!-- <button class="hogehoge" type="button" id="stop">next</button> -->
 <!-- <botton type="button" id="download">dl</botton> -->
 
 <script>
 
   const startbutton = document.getElementById('start');
-  const nextbutton  = document.getElementById('stop');
+  // const nextbutton  = document.getElementById('stop');
   // var downloadbutton = document.getElementById('download');
 
   const video = document.getElementById('video');// 適当にvideoタグのオブジェクトを取得
@@ -49,6 +51,8 @@
 
   const ctx = movie.getContext("2d");
   const cty = canvas.getContext("2d");
+
+  let imgElement = document.getElementById("inputImage");
 
   const text = document.getElementById("text");
 
@@ -231,19 +235,50 @@
                 keybordpoint[3] = keybordpoint[2];
                 keybordpoint[2] = temp1;
             }else{
+              let img = cv.imread(imgElement);
+              const kbinv = [[0, 0], [img.cols, 0], [img.cols, img.rows], [0, img.rows]];
+              const srcPoints = cv.matFromArray(4, 1, cv.CV_32FC2, kbinv.flat());
+              const dstPoints = cv.matFromArray(4, 1, cv.CV_32FC2, setpoint.flat());
+
+              const homography = cv.findHomography(srcPoints, dstPoints);
+              //ホモグラフィ行列を計算
+
+              //画像Aを変形
+              let warped = new cv.Mat();
+              let size = new cv.Size(srcresult.cols, srcresult.rows);
+              cv.warpPerspective(img, warped, homography, size);
+
+              //画像Bに合成（透過部分を利用）
+              let mask = new cv.Mat();
+              cv.threshold(warped, mask, 1, 255, cv.THRESH_BINARY);
+              let invMask = new cv.Mat();
+              cv.bitwise_not(mask, invMask);
+
+              let bg = new cv.Mat();
+              let fg = new cv.Mat();
+              cv.bitwise_and(srcresult, srcresult, bg, invMask);
+              cv.bitwise_and(warped, warped, fg, mask);
+              cv.add(bg, fg, srcresult);
+
+              //メモリ解放
+              img.delete();
+              srcPoints.delete();
+              dstPoints.delete();
+              homography.delete();
+              warped.delete();
+              mask.delete();
+              invMask.delete();
+              bg.delete();
+              fg.delete();
+              
               // console.log(keybordpoint);
 
-              // let pts = cv.matFromArray(1, keybordpoint.length, cv.CV_32FC2, keybordpoint.flat()); // 4点の配列をOpenCV形式に変換
-              // let isClosed = true; // 閉じた図形を描画する
-              const color = new cv.Scalar(255, 0, 0, 100);
-              // console.log(pts);
+              // const color = new cv.Scalar(255, 0, 0, 100);
 
-              for(i=0;i<4;i++){
-              cv.line(srcresult, {x: setpoint[i][0], y: setpoint[i][1]}, 
-                                {x: setpoint[(i + 1)% 4][0], y: setpoint[(i + 1)% 4][1]}, color, 2);
-              }
-              // cv.polylines(srcresult, [pts], isClosed, color, 2);
-              // pts.delete(); // メモリ解放
+              // for(i=0;i<4;i++){
+              // cv.line(srcresult, {x: setpoint[i][0], y: setpoint[i][1]}, 
+              //                   {x: setpoint[(i + 1)% 4][0], y: setpoint[(i + 1)% 4][1]}, color, 2);
+              // }
             }
           }
         }

@@ -129,33 +129,41 @@
           p2.push(b);
         }
         
-        let matrix = [];
-        
-        const srcPoints = cv.matFromArray(p1.length, 1, cv.CV_32FC2, p1.flat());
-        const dstPoints = cv.matFromArray(p2.length, 1, cv.CV_32FC2, p2.flat());
-        const mask = new cv.Mat();
-        const homography = cv.findHomography(srcPoints, dstPoints, cv.RANSAC, 5, mask);
-
-        for (let i = 0; i < homography.rows; i++) {
-          let row = [];
-          for (let j = 0; j < homography.cols; j++) {
-            row.push(homography.doubleAt(i, j)); // doubleAtで値を取得
-          }
-          matrix.push(row);
-        }
-        console.log(homography.rows);
-        console.log(matrix);
-
-        // マスクを適用して正しいマッチを数える
         let count = 0;
-        // const inlierMatches = new cv.DMatchVector();
-        for (let i = 0; i < mask.rows; i++) {
-          if (mask.data[i]) {
-            count++;
-            // inlierMatches.push_back(goodMatches.get(i));
+        if(leng > 4){
+          let matrix = [];
+
+          const srcPoints = cv.matFromArray(p1.length, 1, cv.CV_32FC2, p1.flat());
+          const dstPoints = cv.matFromArray(p2.length, 1, cv.CV_32FC2, p2.flat());
+          const mask = new cv.Mat();
+          const homography = cv.findHomography(srcPoints, dstPoints, cv.RANSAC, 5, mask);
+
+          for (let i = 0; i < homography.rows; i++) {
+            let row = [];
+            for (let j = 0; j < homography.cols; j++) {
+              row.push(homography.doubleAt(i, j)); // doubleAtで値を取得
+            }
+            matrix.push(row);
           }
+          console.log(homography.rows);
+          console.log(matrix);
+
+          // マスクを適用して正しいマッチを数える
+          
+          // const inlierMatches = new cv.DMatchVector();
+          for (let i = 0; i < mask.rows; i++) {
+            if (mask.data[i]) {
+              count++;
+              // inlierMatches.push_back(goodMatches.get(i));
+            }
+          }
+          text.textContent = count;
+
+          srcPoints.delete();
+          dstPoints.delete();
+          mask.delete();
+          homography.delete();
         }
-        text.textContent = count;
 
         let flagp = 0;
         if(flagpoint){
@@ -244,10 +252,7 @@
         bf.delete();
         knnMatches.delete();
         goodMatches.delete();
-        srcPoints.delete();
-        dstPoints.delete();
-        mask.delete();
-        homography.delete();
+        
         // inlierMatches.delete();
       }
 

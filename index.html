@@ -229,7 +229,7 @@
             const color = new cv.Scalar(255, 0, 0, 100);
             // console.log(pts);
 
-            for(i=0;i<4;i++){
+            for(i=0;i<(4- flagp);i++){
             cv.line(srcresult, {x: setpoint[i][0], y: setpoint[i][1]}, 
                                {x: setpoint[(i + 1)% 4][0], y: setpoint[(i + 1)% 4][1]}, color, 2);
             }

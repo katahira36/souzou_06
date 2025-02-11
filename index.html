@@ -173,21 +173,28 @@
 
         if(count > 10){
           //ずれを修正
+          let setpoint = [];
           for(i=0; i < (selectbord - flagp) ;i++){
             let xy1 = [];
+            let sp = [];
             for(j=0;j<3;j++){
               const sum = matrix[j][0] * keybordpoint[i][0] * movie.width / canvas.width + matrix[j][1] * keybordpoint[i][1] *movie.height /canvas.height + matrix[j][2];
               xy1.push(sum);
             }
-            keybordpoint[i][0] = xy1[0] * canvas.width / movie.width / xy1[2];
-            keybordpoint[i][1] = xy1[1] *canvas.height /movie.height / xy1[2];
+            if(flagp){
+              keybordpoint[i][0] = xy1[0] * canvas.width / movie.width / xy1[2];
+              keybordpoint[i][1] = xy1[1] *canvas.height /movie.height / xy1[2];
+            }
+            sp.push(xy1[0] * canvas.width / movie.width / xy1[2]);
+            sp.push(xy1[1] *canvas.height /movie.height / xy1[2]);
+            setpoint.push(sp);
           }
           
           if(selectbord < 4){
             const color = new cv.Scalar(255, 0, 0, 255);
 
             for(i=0; i < selectbord ;i++){
-              cv.circle(srcresult, {x: keybordpoint[i][0], y: keybordpoint[i][1]}, 5, color, 2);
+              cv.circle(srcresult, {x: setpoint[i][0], y: setpoint[i][1]}, 5, color, 2);
             }
           }else{
             if(flagp){
@@ -223,8 +230,8 @@
             // console.log(pts);
 
             for(i=0;i<4;i++){
-            cv.line(srcresult, {x: keybordpoint[i][0], y: keybordpoint[i][1]}, 
-                               {x: keybordpoint[(i + 1)% 4][0], y: keybordpoint[(i + 1)% 4][1]}, color, 2);
+            cv.line(srcresult, {x: setpoint[i][0], y: setpoint[i][1]}, 
+                               {x: setpoint[(i + 1)% 4][0], y: setpoint[(i + 1)% 4][1]}, color, 2);
             }
             // cv.polylines(srcresult, [pts], isClosed, color, 2);
             // pts.delete(); // メモリ解放

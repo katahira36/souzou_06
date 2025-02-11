@@ -193,7 +193,7 @@
           if(selectbord < 4){
             const color = new cv.Scalar(255, 0, 0, 255);
 
-            for(i=0; i < selectbord ;i++){
+            for(i=0; i < (selectbord - flagp) ;i++){
               cv.circle(srcresult, {x: setpoint[i][0], y: setpoint[i][1]}, 5, color, 2);
             }
           }else{

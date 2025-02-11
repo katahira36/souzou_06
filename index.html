@@ -222,8 +222,10 @@
             const color = new cv.Scalar(255, 0, 0, 100);
             // console.log(pts);
 
+            for(i=0;i<4;i++){
             cv.line(srcresult, {x: keybordpoint[i][0], y: keybordpoint[i][1]}, 
                                {x: keybordpoint[(i + 1)% 4][0], y: keybordpoint[(i + 1)% 4][1]}, color, 2);
+            }
             // cv.polylines(srcresult, [pts], isClosed, color, 2);
             // pts.delete(); // メモリ解放
           }

@@ -87,7 +87,7 @@
       // // 特徴点を検出
       orb.detectAndCompute(equalized, new cv.Mat(), keypoints, descriptors);
 
-      console.log("特徴点抽出");
+      // console.log("特徴点抽出");
 
       if (startdata === null) {
         startdata = equalized.clone();
@@ -115,7 +115,7 @@
           }
         }
 
-        console.log(pts1.length);
+        // console.log(pts1.length);
         leng = pts1.length;
 
         let p1 = [];
@@ -146,8 +146,8 @@
             }
             matrix.push(row);
           }
-          console.log(homography.rows);
-          console.log(matrix);
+          // console.log(homography.rows);
+          // console.log(matrix);
 
           // マスクを適用して正しいマッチを数える
           
@@ -231,7 +231,7 @@
                 keybordpoint[3] = keybordpoint[2];
                 keybordpoint[2] = temp1;
             }else{
-              console.log(keybordpoint);
+              // console.log(keybordpoint);
 
               // let pts = cv.matFromArray(1, keybordpoint.length, cv.CV_32FC2, keybordpoint.flat()); // 4点の配列をOpenCV形式に変換
               // let isClosed = true; // 閉じた図形を描画する
@@ -247,7 +247,7 @@
             }
           }
         }
-        console.log("x")
+        // console.log("x")
         cv.imshow('canvas', srcresult);
 
         bf.delete();

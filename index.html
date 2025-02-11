@@ -91,7 +91,7 @@
       // // 特徴点を検出
       orb.detectAndCompute(equalized, new cv.Mat(), keypoints, descriptors);
 
-      // console.log("特徴点抽出");
+      console.log("特徴点抽出");
 
       if (startdata === null) {
         startdata = equalized.clone();
@@ -119,7 +119,7 @@
           }
         }
 
-        // console.log(pts1.length);
+        console.log(pts1.length);
         leng = pts1.length;
 
         let p1 = [];
@@ -151,7 +151,7 @@
             matrix.push(row);
           }
           // console.log(homography.rows);
-          // console.log(matrix);
+          console.log(matrix);
 
           // マスクを適用して正しいマッチを数える
           
@@ -235,6 +235,7 @@
                 keybordpoint[3] = keybordpoint[2];
                 keybordpoint[2] = temp1;
             }else{
+              console.log("key");
               let img = cv.imread(imgElement);
               const kbinv = [[0, 0], [img.cols, 0], [img.cols, img.rows], [0, img.rows]];
               const srcPoints = cv.matFromArray(4, 1, cv.CV_32FC2, kbinv.flat());
@@ -243,17 +244,20 @@
               const homography = cv.findHomography(srcPoints, dstPoints);
               //ホモグラフィ行列を計算
 
+              console.log("change1");
               //画像Aを変形
               let warped = new cv.Mat();
               let size = new cv.Size(srcresult.cols, srcresult.rows);
               cv.warpPerspective(img, warped, homography, size);
 
+              console.log("change2");
               //画像Bに合成（透過部分を利用）
               let mask = new cv.Mat();
               cv.threshold(warped, mask, 1, 255, cv.THRESH_BINARY);
               let invMask = new cv.Mat();
               cv.bitwise_not(mask, invMask);
 
+              console.log("change3");
               let bg = new cv.Mat();
               let fg = new cv.Mat();
               cv.bitwise_and(srcresult, srcresult, bg, invMask);

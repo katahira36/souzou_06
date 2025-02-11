@@ -221,20 +221,21 @@
               let temp1 = keybordpoint[3];
                 keybordpoint[3] = keybordpoint[2];
                 keybordpoint[2] = temp1;
-            }
-            console.log(keybordpoint);
+            }else{
+              console.log(keybordpoint);
 
-            // let pts = cv.matFromArray(1, keybordpoint.length, cv.CV_32FC2, keybordpoint.flat()); // 4点の配列をOpenCV形式に変換
-            // let isClosed = true; // 閉じた図形を描画する
-            const color = new cv.Scalar(255, 0, 0, 100);
-            // console.log(pts);
+              // let pts = cv.matFromArray(1, keybordpoint.length, cv.CV_32FC2, keybordpoint.flat()); // 4点の配列をOpenCV形式に変換
+              // let isClosed = true; // 閉じた図形を描画する
+              const color = new cv.Scalar(255, 0, 0, 100);
+              // console.log(pts);
 
-            for(i=0;i<(4- flagp);i++){
-            cv.line(srcresult, {x: setpoint[i][0], y: setpoint[i][1]}, 
-                               {x: setpoint[(i + 1)% 4][0], y: setpoint[(i + 1)% 4][1]}, color, 2);
+              for(i=0;i<4;i++){
+              cv.line(srcresult, {x: setpoint[i][0], y: setpoint[i][1]}, 
+                                {x: setpoint[(i + 1)% 4][0], y: setpoint[(i + 1)% 4][1]}, color, 2);
+              }
+              // cv.polylines(srcresult, [pts], isClosed, color, 2);
+              // pts.delete(); // メモリ解放
             }
-            // cv.polylines(srcresult, [pts], isClosed, color, 2);
-            // pts.delete(); // メモリ解放
           }
         }
         console.log("x")

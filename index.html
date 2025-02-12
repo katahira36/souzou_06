@@ -128,8 +128,8 @@
 
         for (let i = 0; i < matches.size(); i++) {
           let match = matches.get(i);
-          let p1 = kp1.get(match.queryIdx).pt; // img1 の特徴点座標
-          let p2 = kp2.get(match.trainIdx).pt; // img2 の特徴点座標
+          let p1 = startkeypoints.get(match.queryIdx).pt; // img1 の特徴点座標
+          let p2 = keypoints.get(match.trainIdx).pt; // img2 の特徴点座標
           pts1.push([p1.x, p1.y]);
           pts2.push([p2.x, p2.y]);
         }

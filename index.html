@@ -261,9 +261,9 @@
               let bg = new cv.Mat();
               let fg = new cv.Mat();
               cv.bitwise_and(srcresult, srcresult, bg, invMask);
+              console.log("change4");
               cv.bitwise_and(warped, warped, fg, mask);
 
-              console.log("change4");
               cv.add(bg, fg, srcresult);
 
               //メモリ解放

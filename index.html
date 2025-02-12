@@ -104,54 +104,54 @@
         // KNNマッチング
         const bf = new cv.BFMatcher(cv.NORM_HAMMING, false); // クロスチェックを無効に設定
 
-        let matches = new cv.DMatchVector();  //速さ重視
-        bf.match(startdescriptors, descriptors, matches);
+        // let matches = new cv.DMatchVector();  //速さ重視
+        // bf.match(startdescriptors, descriptors, matches);
 
-        // const knnMatches = new cv.DMatchVectorVector();    //精度重視
-        // bf.knnMatch(startdescriptors, descriptors, knnMatches, 2); // k=2
+        const knnMatches = new cv.DMatchVectorVector();    //精度重視
+        bf.knnMatch(startdescriptors, descriptors, knnMatches, 2); // k=2
 
         // Loweの比率テスト
         let leng = 0;
-        // const goodMatches = new cv.DMatchVector();
+        const goodMatches = new cv.DMatchVector();
         let pts1 = [];
         let pts2 = [];
 
-        // for (let i = 0; i < knnMatches.size(); i++) {
-        //   const m = knnMatches.get(i).get(0); // 最良のマッチ
-        //   const n = knnMatches.get(i).get(1); // 次点のマッチ
-        //   if (m.distance < 0.75 * n.distance) { // 比率テスト: 0.75が一般的
-        //     goodMatches.push_back(m);
-        //     pts1.push(startkeypoints.get(m.queryIdx).pt);
-        //     pts2.push(keypoints.get(m.trainIdx).pt);
-        //   }
-        // }
-
-        for (let i = 0; i < matches.size(); i++) {
-          let match = matches.get(i);
-          let p1 = startkeypoints.get(match.queryIdx).pt; // img1 の特徴点座標
-          let p2 = keypoints.get(match.trainIdx).pt; // img2 の特徴点座標
-          pts1.push([p1.x, p1.y]);
-          pts2.push([p2.x, p2.y]);
+        for (let i = 0; i < knnMatches.size(); i++) {
+          const m = knnMatches.get(i).get(0); // 最良のマッチ
+          const n = knnMatches.get(i).get(1); // 次点のマッチ
+          if (m.distance < 0.75 * n.distance) { // 比率テスト: 0.75が一般的
+            goodMatches.push_back(m);
+            pts1.push(startkeypoints.get(m.queryIdx).pt);
+            pts2.push(keypoints.get(m.trainIdx).pt);
+          }
         }
 
-        let p1 = pts1;
-        let p2 = pts2;
+        // for (let i = 0; i < matches.size(); i++) {
+        //   let match = matches.get(i);
+        //   let p1 = startkeypoints.get(match.queryIdx).pt; // img1 の特徴点座標
+        //   let p2 = keypoints.get(match.trainIdx).pt; // img2 の特徴点座標
+        //   pts1.push([p1.x, p1.y]);
+        //   pts2.push([p2.x, p2.y]);
+        // }
+
+        // let p1 = pts1;
+        // let p2 = pts2;
 
         console.log(pts1.length);
         leng = pts1.length;
 
-        // let p1 = [];
-        // let p2 = [];
-        // for(i=0; i< leng ;i++){
-        //   let a = [];
-        //   let b = [];
-        //   a.push(pts1[i].x);
-        //   a.push(pts1[i].y);
-        //   b.push(pts2[i].x);
-        //   b.push(pts2[i].y);
-        //   p1.push(a);
-        //   p2.push(b);
-        // }
+        let p1 = [];
+        let p2 = [];
+        for(i=0; i< leng ;i++){
+          let a = [];
+          let b = [];
+          a.push(pts1[i].x);
+          a.push(pts1[i].y);
+          b.push(pts2[i].x);
+          b.push(pts2[i].y);
+          p1.push(a);
+          p2.push(b);
+        }
         
         let matrix = [];
         let count = 0;
@@ -312,9 +312,9 @@
         cv.imshow('canvas', srcresult);
 
         bf.delete();
-        // knnMatches.delete();
-        // goodMatches.delete();
-        matches.delete();
+        knnMatches.delete();
+        goodMatches.delete();
+        // matches.delete();
         
         // inlierMatches.delete();
       }

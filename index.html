@@ -85,12 +85,13 @@
 
       // ORB検出器を作成
       const orb = new cv.ORB();
+      orb.setMaxFeatures(200);
+      
       let keypoints = new cv.KeyPointVector();
       let descriptors = new cv.Mat();
 
       // // 特徴点を検出
       orb.detectAndCompute(equalized, new cv.Mat(), keypoints, descriptors);
-      orb.setMaxFeatures(200);
 
       console.log("特徴点抽出：" + keypoints.size());
 

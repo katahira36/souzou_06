@@ -86,7 +86,7 @@
       // ORB検出器を作成
       const orb = new cv.ORB();
       orb.setMaxFeatures(200);
-      
+
       let keypoints = new cv.KeyPointVector();
       let descriptors = new cv.Mat();
 
@@ -250,7 +250,7 @@
               //画像Aを変形
               let warped = new cv.Mat();
               let size = new cv.Size(srcresult.cols, srcresult.rows);
-              cv.warpPerspective(img, warped, homography, size);
+              cv.warpPerspective(img, warped, homography, size, cv.INTER_NEAREST);
 
               console.log("change2");
               //画像Bに合成（透過部分を利用）
@@ -268,7 +268,7 @@
               // cv.bitwise_and(warped, warped, fg, mask);
               cv.bitwise_and(warped, mask, fg);
 
-              cv.add(bg, fg, srcresult);
+              cv.add(bg, fg, srcresult, mask);
 
               //メモリ解放
               img.delete();

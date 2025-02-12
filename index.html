@@ -244,7 +244,7 @@
               const homography = cv.findHomography(srcPoints, dstPoints);
               //ホモグラフィ行列を計算
 
-              console.log("change1");
+              console.log(homography);
               //画像Aを変形
               let warped = new cv.Mat();
               let size = new cv.Size(srcresult.cols, srcresult.rows);

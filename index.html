@@ -105,7 +105,7 @@
         const bf = new cv.BFMatcher(cv.NORM_HAMMING, false); // クロスチェックを無効に設定
 
         let matches = new cv.DMatchVector();  //速さ重視
-        bf.match(des1, des2, matches);
+        bf.match(startdescriptors, descriptors, matches);
 
         // const knnMatches = new cv.DMatchVectorVector();    //精度重視
         // bf.knnMatch(startdescriptors, descriptors, knnMatches, 2); // k=2

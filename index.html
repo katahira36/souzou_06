@@ -91,7 +91,7 @@
       // // 特徴点を検出
       orb.detectAndCompute(equalized, new cv.Mat(), keypoints, descriptors);
 
-      console.log("特徴点抽出");
+      console.log("特徴点抽出：" + keypoints.size());
 
       if (startdata === null) {
         startdata = equalized.clone();

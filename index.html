@@ -237,15 +237,20 @@
             let xy1 = [];
             let sp = [];
             for(j=0;j<3;j++){
-              const sum = matrix[j][0] * keybordpoint[i][0] * movie.width / canvas.width + matrix[j][1] * keybordpoint[i][1] *movie.height /canvas.height + matrix[j][2];
+              // const sum = matrix[j][0] * keybordpoint[i][0] * movie.width / canvas.width + matrix[j][1] * keybordpoint[i][1] *movie.height /canvas.height + matrix[j][2];
+              const sum = matrix[j][0] * keybordpoint[i][0] + matrix[j][1] * keybordpoint[i][1] + matrix[j][2];
               xy1.push(sum);
             }
             if(flagp){
-              keybordpoint[i][0] = xy1[0] * canvas.width / movie.width / xy1[2];
-              keybordpoint[i][1] = xy1[1] *canvas.height /movie.height / xy1[2];
+              // keybordpoint[i][0] = xy1[0] * canvas.width / movie.width / xy1[2];
+              // keybordpoint[i][1] = xy1[1] *canvas.height /movie.height / xy1[2];
+              keybordpoint[i][0] = xy1[0] / xy1[2];
+              keybordpoint[i][1] = xy1[1] / xy1[2];
             }
-            sp.push(xy1[0] * canvas.width / movie.width / xy1[2]);
-            sp.push(xy1[1] *canvas.height /movie.height / xy1[2]);
+            // sp.push(xy1[0] * canvas.width / movie.width / xy1[2]);
+            // sp.push(xy1[1] *canvas.height /movie.height / xy1[2]);
+            sp.push(xy1[0] / xy1[2]);
+            sp.push(xy1[1] / xy1[2]);
             setpoint.push(sp);
           }
           
@@ -283,6 +288,7 @@
             }else{
               console.log("key");
               let img = cv.imread(imgElement);
+              // const kbinv = [[0, 0], [img.cols, 0], [img.cols, img.rows], [0, img.rows]]; //パソコン用
               const kbinv = [[0, img.rows],[0, 0], [img.cols, 0], [img.cols, img.rows]];
               const srcPoints = cv.matFromArray(4, 1, cv.CV_32FC2, kbinv.flat());
               const dstPoints = cv.matFromArray(4, 1, cv.CV_32FC2, setpoint.flat());
@@ -293,7 +299,8 @@
               console.log(homography);
               //画像Aを変形
               let warped = new cv.Mat();
-              let size = new cv.Size(srcresult.cols, srcresult.rows);
+              // let size = new cv.Size(srcresult.cols, srcresult.rows);
+              let size = new cv.Size(movie.cols, movie.rows);
               cv.warpPerspective(img, warped, homography, size, cv.INTER_NEAREST);
 
               console.log("change2");
@@ -307,12 +314,14 @@
               let bg = new cv.Mat();
               let fg = new cv.Mat();
               // cv.bitwise_and(srcresult, srcresult, bg, invMask);
-              cv.bitwise_and(srcresult, invMask, bg);
+              // cv.bitwise_and(srcresult, invMask, bg);
+              cv.bitwise_and(src, invMask, bg);
               console.log("change4");
               // cv.bitwise_and(warped, warped, fg, mask);
               cv.bitwise_and(warped, mask, fg);
 
-              cv.add(bg, fg, srcresult);
+              // cv.add(bg, fg, srcresult);
+              cv.add(bg, fg, src);
 
               //メモリ解放
               img.delete();
@@ -337,7 +346,9 @@
           }
         }
         // console.log("x")
-        cv.imshow('canvas', srcresult);
+        // cv.imshow('canvas', srcresult);
+        cv.imshow('movie', src);
+        cty.drawImage(movie, 0, 0, movie.width, movie.height, 0, 0, canvas.width, canvas.height);
 
         bf.delete();
         knnMatches.delete();

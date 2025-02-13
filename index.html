@@ -237,15 +237,12 @@
             let xy1 = [];
             let sp = [];
             for(j=0;j<3;j++){
-              // const sum = matrix[j][0] * keybordpoint[i][0] * movie.width / canvas.width + matrix[j][1] * keybordpoint[i][1] *movie.height /canvas.height + matrix[j][2];
-              const sum = matrix[j][0] * keybordpoint[i][0] + matrix[j][1] * keybordpoint[i][1] + matrix[j][2];
+              const sum = matrix[j][0] * keybordpoint[i][0] * movie.width / canvas.width + matrix[j][1] * keybordpoint[i][1] *movie.height /canvas.height + matrix[j][2];
               xy1.push(sum);
             }
             if(flagp){
-              // keybordpoint[i][0] = xy1[0] * canvas.width / movie.width / xy1[2];
-              // keybordpoint[i][1] = xy1[1] *canvas.height /movie.height / xy1[2];
-              keybordpoint[i][0] = xy1[0] / xy1[2];
-              keybordpoint[i][1] = xy1[1] / xy1[2];
+              keybordpoint[i][0] = xy1[0] * canvas.width / movie.width / xy1[2];
+              keybordpoint[i][1] = xy1[1] *canvas.height /movie.height / xy1[2];
             }
             // sp.push(xy1[0] * canvas.width / movie.width / xy1[2]);
             // sp.push(xy1[1] *canvas.height /movie.height / xy1[2]);
@@ -258,7 +255,8 @@
             const color = new cv.Scalar(255, 0, 0, 255);
 
             for(i=0; i < (selectbord - flagp) ;i++){
-              cv.circle(srcresult, {x: setpoint[i][0], y: setpoint[i][1]}, 5, color, 2);
+              // cv.circle(srcresult, {x: setpoint[i][0], y: setpoint[i][1]}, 5, color, 2);
+              cv.circle(src, {x: setpoint[i][0], y: setpoint[i][1]}, 5, color, 2);
             }
           }else{
             if(flagp){

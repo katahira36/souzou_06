@@ -316,7 +316,7 @@
               let fg = new cv.Mat();
               // cv.bitwise_and(srcresult, srcresult, bg, invMask);
               // cv.bitwise_and(srcresult, invMask, bg);
-              cv.bitwise_and(src, invMask, bg);
+              cv.bitwise_and(src, src, bg, invMask);
               console.log("change4");
               // cv.bitwise_and(warped, warped, fg, mask);
               cv.bitwise_and(warped, mask, fg);

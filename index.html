@@ -283,7 +283,7 @@
             }else{
               console.log("key");
               let img = cv.imread(imgElement);
-              const kbinv = [[0, 0], [img.cols, 0], [img.cols, img.rows], [0, img.rows]];
+              const kbinv = [[0, img.rows],[0, 0], [img.cols, 0], [img.cols, img.rows]];
               const srcPoints = cv.matFromArray(4, 1, cv.CV_32FC2, kbinv.flat());
               const dstPoints = cv.matFromArray(4, 1, cv.CV_32FC2, setpoint.flat());
 

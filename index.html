@@ -303,8 +303,11 @@
 
               console.log("change2");
               //画像Bに合成（透過部分を利用）
+              let graym =new cv.Mat();
+              cv.cvtColor(warped, graym, cv.COLOR_RGBA2GRAY);
+
               let mask = new cv.Mat();
-              cv.threshold(warped, mask, 1, 255, cv.THRESH_BINARY);
+              cv.threshold(graym, mask, 1, 255, cv.THRESH_BINARY);
               let invMask = new cv.Mat();
               cv.bitwise_not(mask, invMask);
 

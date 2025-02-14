@@ -65,33 +65,33 @@
   let startkeypoints = null;
   let startdescriptors = null;
 
-  let wakeLock = null;
+  // let wakeLock = null;
 
-  async function requestWakeLock() {
-      try {
-          wakeLock = await navigator.wakeLock.request("screen");
-          console.log("Wake Lock acquired");
+  // async function requestWakeLock() {
+  //     try {
+  //         wakeLock = await navigator.wakeLock.request("screen");
+  //         console.log("Wake Lock acquired");
 
-          wakeLock.addEventListener("release", () => {
-              console.log("Wake Lock released");
-              wakeLock = null; // ロックが解除されたら変数をリセット
-          });
-      } catch (err) {
-          console.error("Wake Lock request failed:", err);
-      }
-  }
+  //         wakeLock.addEventListener("release", () => {
+  //             console.log("Wake Lock released");
+  //             wakeLock = null; // ロックが解除されたら変数をリセット
+  //         });
+  //     } catch (err) {
+  //         console.error("Wake Lock request failed:", err);
+  //     }
+  // }
 
-  // Wake Lock の初回取得
-  document.addEventListener("DOMContentLoaded", () => {
-      requestWakeLock();
-  });
+  // // Wake Lock の初回取得
+  // document.addEventListener("DOMContentLoaded", () => {
+  //     requestWakeLock();
+  // });
 
-  // タブのフォーカス復帰時に Wake Lock を再取得
-  document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "visible" && wakeLock === null) {
-          requestWakeLock();
-      }
-  });
+  // // タブのフォーカス復帰時に Wake Lock を再取得
+  // document.addEventListener("visibilitychange", () => {
+  //     if (document.visibilityState === "visible" && wakeLock === null) {
+  //         requestWakeLock();
+  //     }
+  // });
 
   function drawCameraToCanvas() {
 

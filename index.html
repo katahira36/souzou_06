@@ -232,7 +232,7 @@
 
         if(count > 10){
           //ずれを修正
-          let setpoint = [];
+          let setpoint = [[movie.width/6, movie.height*5/6],[movie.width/6, movie.height/6], [movie.width*5/6, movie.height/6], [movie.width*5/6, movie.height*5/6]];
           for(i=0; i < (selectbord - flagp) ;i++){
             let xy1 = [];
             let sp = [];
@@ -248,7 +248,7 @@
             // sp.push(xy1[1] *canvas.height /movie.height / xy1[2]);
             sp.push(xy1[0] / xy1[2]);
             sp.push(xy1[1] / xy1[2]);
-            setpoint.push(sp);
+            // setpoint.push(sp);
           }
           
           if(selectbord < 4){

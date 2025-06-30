@@ -230,9 +230,10 @@
           startdescriptors = descriptors.clone();
         }
 
-        if(count > 10){
+        // if(count > 10){
+        if(1){
           //ずれを修正
-          let setpoint = [[movie.width/6, movie.height*5/6],[movie.width/6, movie.height/6], [movie.width*5/6, movie.height/6], [movie.width*5/6, movie.height*5/6]];
+          let setpoint = [[movie.width/6, movie.height/6], [movie.width*5/6, movie.height/6], [movie.width*5/6, movie.height*5/6],[movie.width/6, movie.height*5/6]];
           for(i=0; i < (selectbord - flagp) ;i++){
             let xy1 = [];
             let sp = [];

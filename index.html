@@ -103,188 +103,188 @@
       ctx.drawImage(video, 0, 0, video.width, video.height, 0, 0, movie.width, movie.height);
       let src = cv.imread(movie);
 
-      // let gray = new cv.Mat();
-      // // グレースケールに変換（特徴点検出に適した前処理）
-      // cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+      let gray = new cv.Mat();
+      // グレースケールに変換（特徴点検出に適した前処理）
+      cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
 
-      // let equalized = new cv.Mat();
-      // // ヒストグラム均等化（コントラストをハッキリさせる）
-      // cv.equalizeHist(gray, equalized);
+      let equalized = new cv.Mat();
+      // ヒストグラム均等化（コントラストをハッキリさせる）
+      cv.equalizeHist(gray, equalized);
 
-      // // ORB検出器を作成
-      // const orb = new cv.ORB();
-      // orb.setMaxFeatures(100);
+      // ORB検出器を作成
+      const orb = new cv.ORB();
+      orb.setMaxFeatures(100);
 
-      // let keypoints = new cv.KeyPointVector();
-      // let descriptors = new cv.Mat();
+      let keypoints = new cv.KeyPointVector();
+      let descriptors = new cv.Mat();
 
-      // // // 特徴点を検出
-      // orb.detectAndCompute(equalized, new cv.Mat(), keypoints, descriptors);
+      // // 特徴点を検出
+      orb.detectAndCompute(equalized, new cv.Mat(), keypoints, descriptors);
 
-      // console.log("特徴点抽出：" + keypoints.size());
+      console.log("特徴点抽出：" + keypoints.size());
 
-      // if (startdata === null) {
-      //   startdata = equalized.clone();
-      //   startkeypoints = keypoints.clone();
-      //   startdescriptors = descriptors.clone();
-      //   flagpoint = false;
-      // } else{
-      //   // KNNマッチング
-      //   const bf = new cv.BFMatcher(cv.NORM_HAMMING, false); // クロスチェックを無効に設定
+      if (startdata === null) {
+        startdata = equalized.clone();
+        startkeypoints = keypoints.clone();
+        startdescriptors = descriptors.clone();
+        flagpoint = false;
+      } else{
+        // KNNマッチング
+        const bf = new cv.BFMatcher(cv.NORM_HAMMING, false); // クロスチェックを無効に設定
 
-      //   // let matches = new cv.DMatchVector();  //速さ重視
-      //   // bf.match(startdescriptors, descriptors, matches);
+        // let matches = new cv.DMatchVector();  //速さ重視
+        // bf.match(startdescriptors, descriptors, matches);
 
-      //   const knnMatches = new cv.DMatchVectorVector();    //精度重視
-      //   bf.knnMatch(startdescriptors, descriptors, knnMatches, 2); // k=2
+        const knnMatches = new cv.DMatchVectorVector();    //精度重視
+        bf.knnMatch(startdescriptors, descriptors, knnMatches, 2); // k=2
 
-      //   // Loweの比率テスト
-      //   let leng = 0;
-      //   const goodMatches = new cv.DMatchVector();
-      //   let pts1 = [];
-      //   let pts2 = [];
+        // Loweの比率テスト
+        let leng = 0;
+        const goodMatches = new cv.DMatchVector();
+        let pts1 = [];
+        let pts2 = [];
 
-      //   for (let i = 0; i < knnMatches.size(); i++) {
-      //     const m = knnMatches.get(i).get(0); // 最良のマッチ
-      //     const n = knnMatches.get(i).get(1); // 次点のマッチ
-      //     if (m.distance < 0.75 * n.distance) { // 比率テスト: 0.75が一般的
-      //       goodMatches.push_back(m);
-      //       pts1.push(startkeypoints.get(m.queryIdx).pt);
-      //       pts2.push(keypoints.get(m.trainIdx).pt);
-      //     }
-      //   }
+        for (let i = 0; i < knnMatches.size(); i++) {
+          const m = knnMatches.get(i).get(0); // 最良のマッチ
+          const n = knnMatches.get(i).get(1); // 次点のマッチ
+          if (m.distance < 0.75 * n.distance) { // 比率テスト: 0.75が一般的
+            goodMatches.push_back(m);
+            pts1.push(startkeypoints.get(m.queryIdx).pt);
+            pts2.push(keypoints.get(m.trainIdx).pt);
+          }
+        }
 
-      //   // for (let i = 0; i < matches.size(); i++) {
-      //   //   let match = matches.get(i);
-      //   //   let p1 = startkeypoints.get(match.queryIdx).pt; // img1 の特徴点座標
-      //   //   let p2 = keypoints.get(match.trainIdx).pt; // img2 の特徴点座標
-      //   //   pts1.push([p1.x, p1.y]);
-      //   //   pts2.push([p2.x, p2.y]);
-      //   // }
+        // for (let i = 0; i < matches.size(); i++) {
+        //   let match = matches.get(i);
+        //   let p1 = startkeypoints.get(match.queryIdx).pt; // img1 の特徴点座標
+        //   let p2 = keypoints.get(match.trainIdx).pt; // img2 の特徴点座標
+        //   pts1.push([p1.x, p1.y]);
+        //   pts2.push([p2.x, p2.y]);
+        // }
 
-      //   // let p1 = pts1;
-      //   // let p2 = pts2;
+        // let p1 = pts1;
+        // let p2 = pts2;
 
-      //   console.log(pts1.length);
-      //   leng = pts1.length;
+        console.log(pts1.length);
+        leng = pts1.length;
 
-      //   let p1 = [];
-      //   let p2 = [];
-      //   for(i=0; i< leng ;i++){
-      //     let a = [];
-      //     let b = [];
-      //     a.push(pts1[i].x);
-      //     a.push(pts1[i].y);
-      //     b.push(pts2[i].x);
-      //     b.push(pts2[i].y);
-      //     p1.push(a);
-      //     p2.push(b);
-      //   }
+        let p1 = [];
+        let p2 = [];
+        for(i=0; i< leng ;i++){
+          let a = [];
+          let b = [];
+          a.push(pts1[i].x);
+          a.push(pts1[i].y);
+          b.push(pts2[i].x);
+          b.push(pts2[i].y);
+          p1.push(a);
+          p2.push(b);
+        }
         
-      //   let matrix = [];
-      //   let count = 0;
-      //   if(leng > 4){
-      //     const srcPoints = cv.matFromArray(p1.length, 1, cv.CV_32FC2, p1.flat());
-      //     const dstPoints = cv.matFromArray(p2.length, 1, cv.CV_32FC2, p2.flat());
-      //     const mask = new cv.Mat();
-      //     const homography = cv.findHomography(srcPoints, dstPoints, cv.RANSAC, 5, mask);
+        let matrix = [];
+        let count = 0;
+        if(leng > 4){
+          const srcPoints = cv.matFromArray(p1.length, 1, cv.CV_32FC2, p1.flat());
+          const dstPoints = cv.matFromArray(p2.length, 1, cv.CV_32FC2, p2.flat());
+          const mask = new cv.Mat();
+          const homography = cv.findHomography(srcPoints, dstPoints, cv.RANSAC, 5, mask);
 
-      //     for (let i = 0; i < homography.rows; i++) {
-      //       let row = [];
-      //       for (let j = 0; j < homography.cols; j++) {
-      //         row.push(homography.doubleAt(i, j)); // doubleAtで値を取得
-      //       }
-      //       matrix.push(row);
-      //     }
-      //     // console.log(homography.rows);
-      //     console.log(matrix);
+          for (let i = 0; i < homography.rows; i++) {
+            let row = [];
+            for (let j = 0; j < homography.cols; j++) {
+              row.push(homography.doubleAt(i, j)); // doubleAtで値を取得
+            }
+            matrix.push(row);
+          }
+          // console.log(homography.rows);
+          console.log(matrix);
 
-      //     // マスクを適用して正しいマッチを数える
+          // マスクを適用して正しいマッチを数える
           
-      //     // const inlierMatches = new cv.DMatchVector();
-      //     for (let i = 0; i < mask.rows; i++) {
-      //       if (mask.data[i]) {
-      //         count++;
-      //         // inlierMatches.push_back(goodMatches.get(i));
-      //       }
-      //     }
-      //     text.textContent = count;
+          // const inlierMatches = new cv.DMatchVector();
+          for (let i = 0; i < mask.rows; i++) {
+            if (mask.data[i]) {
+              count++;
+              // inlierMatches.push_back(goodMatches.get(i));
+            }
+          }
+          text.textContent = count;
 
-      //     srcPoints.delete();
-      //     dstPoints.delete();
-      //     mask.delete();
-      //     homography.delete();
-      //   }
+          srcPoints.delete();
+          dstPoints.delete();
+          mask.delete();
+          homography.delete();
+        }
 
-      //   let flagp = 0;
-      //   if(flagpoint){
-      //     flagp = 1;
-      //     flagpoint = false;
+        let flagp = 0;
+        if(flagpoint){
+          flagp = 1;
+          flagpoint = false;
 
-      //     startdata.delete();
-      //     startkeypoints.delete();
-      //     startdescriptors.delete();
+          startdata.delete();
+          startkeypoints.delete();
+          startdescriptors.delete();
 
-      //     startdata = equalized.clone();
-      //     startkeypoints = keypoints.clone();
-      //     startdescriptors = descriptors.clone();
-      //   }
+          startdata = equalized.clone();
+          startkeypoints = keypoints.clone();
+          startdescriptors = descriptors.clone();
+        }
 
-      //   if(count > 10){
-      //     //ずれを修正
-          let setpoint = [[movie.width/6, movie.height/6], [movie.width*5/6, movie.height/6], [movie.width*5/6, movie.height*5/6],[movie.width/6, movie.height*5/6]];
-      //     for(i=0; i < (selectbord - flagp) ;i++){
-      //       let xy1 = [];
-      //       let sp = [];
-      //       for(j=0;j<3;j++){
-      //         const sum = matrix[j][0] * keybordpoint[i][0] * movie.width / canvas.width + matrix[j][1] * keybordpoint[i][1] *movie.height /canvas.height + matrix[j][2];
-      //         xy1.push(sum);
-      //       }
-      //       if(flagp){
-      //         keybordpoint[i][0] = xy1[0] * canvas.width / movie.width / xy1[2];
-      //         keybordpoint[i][1] = xy1[1] *canvas.height /movie.height / xy1[2];
-      //       }
-      //       // sp.push(xy1[0] * canvas.width / movie.width / xy1[2]);
-      //       // sp.push(xy1[1] *canvas.height /movie.height / xy1[2]);
-      //       sp.push(xy1[0] / xy1[2]);
-      //       sp.push(xy1[1] / xy1[2]);
-      //       // setpoint.push(sp);
-      //     }
+        if(count > 10){
+          //ずれを修正
+          let setpoint = [];
+          for(i=0; i < (selectbord - flagp) ;i++){
+            let xy1 = [];
+            let sp = [];
+            for(j=0;j<3;j++){
+              const sum = matrix[j][0] * keybordpoint[i][0] * movie.width / canvas.width + matrix[j][1] * keybordpoint[i][1] *movie.height /canvas.height + matrix[j][2];
+              xy1.push(sum);
+            }
+            if(flagp){
+              keybordpoint[i][0] = xy1[0] * canvas.width / movie.width / xy1[2];
+              keybordpoint[i][1] = xy1[1] *canvas.height /movie.height / xy1[2];
+            }
+            // sp.push(xy1[0] * canvas.width / movie.width / xy1[2]);
+            // sp.push(xy1[1] *canvas.height /movie.height / xy1[2]);
+            sp.push(xy1[0] / xy1[2]);
+            sp.push(xy1[1] / xy1[2]);
+            setpoint.push(sp);
+          }
           
-      //     if(selectbord < 4){
-      //       const color = new cv.Scalar(255, 0, 0, 255);
+          if(selectbord < 4){
+            const color = new cv.Scalar(255, 0, 0, 255);
 
-      //       for(i=0; i < (selectbord - flagp) ;i++){
-      //         // cv.circle(srcresult, {x: setpoint[i][0], y: setpoint[i][1]}, 5, color, 2);
-      //         cv.circle(src, {x: setpoint[i][0], y: setpoint[i][1]}, 5, color, 2);
-      //       }
-      //     }else{
-      //       if(flagp){
-      //         //バブルソート
-      //         for(j=3;j>0;j--){
-      //           if((keybordpoint[j-1][0] + keybordpoint[j-1][1]) > (keybordpoint[j][0] + keybordpoint[j][1])){
-      //             let temp = keybordpoint[j];
-      //             keybordpoint[j] = keybordpoint[j-1];
-      //             keybordpoint[j-1] = temp;
-      //           }
-      //         }
-      //         for(j=1;j<3;j++){
-      //           if((keybordpoint[j+1][0] + keybordpoint[j+1][1]) < (keybordpoint[j][0] + keybordpoint[j][1])){
-      //             let temp = keybordpoint[j];
-      //             keybordpoint[j] = keybordpoint[j+1];
-      //             keybordpoint[j+1] = temp;
-      //           }
-      //         }
-      //         if(keybordpoint[1][1] > keybordpoint[2][1]){
-      //           let temp = keybordpoint[1];
-      //           keybordpoint[1] = keybordpoint[2];
-      //           keybordpoint[2] = temp;
-      //         }
-      //         let temp1 = keybordpoint[3];
-      //           keybordpoint[3] = keybordpoint[2];
-      //           keybordpoint[2] = temp1;
-      //       }else{
-      //         console.log("key");
+            for(i=0; i < (selectbord - flagp) ;i++){
+              // cv.circle(srcresult, {x: setpoint[i][0], y: setpoint[i][1]}, 5, color, 2);
+              cv.circle(src, {x: setpoint[i][0], y: setpoint[i][1]}, 5, color, 2);
+            }
+          }else{
+            if(flagp){
+              //バブルソート
+              for(j=3;j>0;j--){
+                if((keybordpoint[j-1][0] + keybordpoint[j-1][1]) > (keybordpoint[j][0] + keybordpoint[j][1])){
+                  let temp = keybordpoint[j];
+                  keybordpoint[j] = keybordpoint[j-1];
+                  keybordpoint[j-1] = temp;
+                }
+              }
+              for(j=1;j<3;j++){
+                if((keybordpoint[j+1][0] + keybordpoint[j+1][1]) < (keybordpoint[j][0] + keybordpoint[j][1])){
+                  let temp = keybordpoint[j];
+                  keybordpoint[j] = keybordpoint[j+1];
+                  keybordpoint[j+1] = temp;
+                }
+              }
+              if(keybordpoint[1][1] > keybordpoint[2][1]){
+                let temp = keybordpoint[1];
+                keybordpoint[1] = keybordpoint[2];
+                keybordpoint[2] = temp;
+              }
+              let temp1 = keybordpoint[3];
+                keybordpoint[3] = keybordpoint[2];
+                keybordpoint[2] = temp1;
+            }else{
+              console.log("key");
               let img = cv.imread(imgElement);
               // const kbinv = [[0, 0], [img.cols, 0], [img.cols, img.rows], [0, img.rows]]; //パソコン用
               const kbinv = [[0, img.rows],[0, 0], [img.cols, 0], [img.cols, img.rows]];
@@ -346,29 +346,29 @@
               // cv.line(srcresult, {x: setpoint[i][0], y: setpoint[i][1]}, 
               //                   {x: setpoint[(i + 1)% 4][0], y: setpoint[(i + 1)% 4][1]}, color, 2);
               // }
-        //     }
-        //   }
-        // }
+            }
+          }
+        }
         // console.log("x")
         // cv.imshow('canvas', srcresult);
         cv.imshow('movie', src);
         cty.drawImage(movie, 0, 0, movie.width, movie.height, 0, 0, canvas.width, canvas.height);
 
-      //   bf.delete();
-      //   knnMatches.delete();
-      //   goodMatches.delete();
-      //   // matches.delete();
+        bf.delete();
+        knnMatches.delete();
+        goodMatches.delete();
+        // matches.delete();
         
-      //   // inlierMatches.delete();
-      // }
+        // inlierMatches.delete();
+      }
 
       // メモリの解放
-      // src.delete();
-      // gray.delete();
-      // equalized.delete();
-      // keypoints.delete();
-      // descriptors.delete();
-      // orb.delete();
+      src.delete();
+      gray.delete();
+      equalized.delete();
+      keypoints.delete();
+      descriptors.delete();
+      orb.delete();
       srcresult.delete();
 
     }else{
